@@ -2,30 +2,101 @@
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "Copland",
 	"patterns": [
-		{
-			"include": "#keywords"
-		},
-		{
-			"include": "#strings"
-		}
+		{ "include": "#place-init" },
+		{ "include": "#operators" },
+		{ "include": "modifiers" },
+		{ "include": "#place" },
+		{ "include": "#symbols" },
+		{ "include": "#punctuation" },
+		{ "include": "#comment" }
 	],
 	"repository": {
-		"keywords": {
+		"place-init": {
 			"patterns": [{
-				"name": "keyword.control.copland",
-				"match": "\\b(if|while|for|return)\\b"
+				"name": "initial place",
+				"match": "*p0"
 			}]
 		},
-		"strings": {
-			"name": "string.quoted.double.copland",
-			"begin": "\"",
-			"end": "\"",
+		"operators": {
 			"patterns": [
 				{
-					"name": "constant.character.escape.copland",
-					"match": "\\\\."
+					"name": "At place",
+					"match": "@"
+				},
+				{
+					"name": "linear sequencing",
+					"match": "->"
+				},
+				{
+					"name": "sequential branch",
+					"match": "-<- | +<- | -<+ | +<+"
+				},
+				{
+					"name": "parallel branch",
+					"match": "-~- | +~- | -~+ | +~+"
 				}
 			]
+		},
+		"modifiers":{
+			"patterns": [
+				{
+					"name": "null",
+					"match": "{}"
+				},
+				{
+					"name": "copy",
+					"match": "_"
+				},
+				{
+					"name": "signature",
+					"match": "!"
+				},
+				{
+					"name": "hash",
+					"match": "#"
+				}
+			]
+		},
+		"place":{
+			"patterns": [
+				{
+					"name": "place",
+					"match": "symbol | digits"
+				}
+			]
+		},
+		"symbol":{
+			"patterns": [
+				{
+					"name": "symbol",
+					"match": "lowercase letter optionally followed by letters, digits, and underscores"
+				}
+			]
+		},
+		"punctuation":{
+			"patterns": [
+				{
+					"name": "open bracket",
+					"match": "["
+				},
+				{
+					"name": "closing bracket",
+					"match": "]"
+				},
+				{
+					"name": "open paren",
+					"match": "("
+				},
+				{
+					"name": "closing paren",
+					"match": ")"
+				}
+			]
+		},
+		"comment": {
+			"name": "comment.line.copland",
+			"begin": "%",
+			"end": "$"
 		}
 	},
 	"scopeName": "source.cop"
