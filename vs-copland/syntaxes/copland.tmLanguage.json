@@ -2,101 +2,38 @@
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "Copland",
 	"patterns": [
-		{ "include": "#place-init" },
 		{ "include": "#operators" },
-		{ "include": "modifiers" },
-		{ "include": "#place" },
-		{ "include": "#symbols" },
-		{ "include": "#punctuation" },
-		{ "include": "#comment" }
+		{ "include": "#special-syntax"},
+		{ "include": "#phrase-measurement"}
 	],
 	"repository": {
-		"place-init": {
-			"patterns": [{
-				"name": "initial place",
-				"match": "*p0"
-			}]
-		},
 		"operators": {
 			"patterns": [
 				{
-					"name": "At place",
+					"name": "keyword.operator.at.copland",
 					"match": "@"
 				},
 				{
-					"name": "linear sequencing",
+					"name": "keyword.operator.linear.copland",
 					"match": "->"
 				},
 				{
-					"name": "sequential branch",
-					"match": "-<- | +<- | -<+ | +<+"
+					"name": "keyword.operator.branch.sequential.copland",
+					"match": "-<-|\\+<-|-<\\+|\\+<\\+"
 				},
 				{
-					"name": "parallel branch",
-					"match": "-~- | +~- | -~+ | +~+"
+					"name": "keyword.operator.branch.parallel.copland",
+					"match": "-~-|\\+~-|-~\\+|\\+~\\+"
 				}
 			]
 		},
-		"modifiers":{
+		"special-syntax": {
 			"patterns": [
 				{
-					"name": "null",
-					"match": "{}"
-				},
-				{
-					"name": "copy",
+					"name": "constant.language.copy.copland",
 					"match": "_"
-				},
-				{
-					"name": "signature",
-					"match": "!"
-				},
-				{
-					"name": "hash",
-					"match": "#"
 				}
 			]
-		},
-		"place":{
-			"patterns": [
-				{
-					"name": "place",
-					"match": "symbol | digits"
-				}
-			]
-		},
-		"symbol":{
-			"patterns": [
-				{
-					"name": "symbol",
-					"match": "lowercase letter optionally followed by letters, digits, and underscores"
-				}
-			]
-		},
-		"punctuation":{
-			"patterns": [
-				{
-					"name": "open bracket",
-					"match": "["
-				},
-				{
-					"name": "closing bracket",
-					"match": "]"
-				},
-				{
-					"name": "open paren",
-					"match": "("
-				},
-				{
-					"name": "closing paren",
-					"match": ")"
-				}
-			]
-		},
-		"comment": {
-			"name": "comment.line.copland",
-			"begin": "%",
-			"end": "$"
 		}
 	},
 	"scopeName": "source.cop"
