@@ -3,29 +3,48 @@
 	"name": "Copland",
 	"patterns": [
 		{
-			"include": "#keywords"
+			"include": "#inital_place"
 		},
 		{
-			"include": "#strings"
+			"include": "#place"
+		},
+		{
+			"include": "#phrase"
+		},
+		{
+			"include": "#symbol"
+		},
+		{
+			"include": "#branch"
+		},
+		{
+			"include": "#comment"
 		}
 	],
 	"repository": {
-		"keywords": {
+		"inital_place": {
 			"patterns": [{
-				"name": "keyword.control.copland",
-				"match": "\\b(if|while|for|return)\\b"
+				"name": "inital_place.???.copland",
+				"match": "/\\*[a-zA-Z]*[0-9]*:/gm"
 			}]
 		},
-		"strings": {
-			"name": "string.quoted.double.copland",
-			"begin": "\"",
-			"end": "\"",
-			"patterns": [
-				{
-					"name": "constant.character.escape.copland",
-					"match": "\\\\."
-				}
-			]
+		"place": {
+			"patterns": [{
+					"name": "place.????.copland",
+					"match": "/\\b[a-zA-Z]*[0-9]*/gm"
+				}]
+		},
+		"phrase":{
+			"patterns": [{
+				"name": "phrase.???.copland",
+				"match": ""
+			}]
+		},
+		"symbol":{
+			"patterns": [{
+				"name": "symbol.????.copland",
+				"match": ""
+			}]
 		}
 	},
 	"scopeName": "source.cop"
