@@ -2,49 +2,38 @@
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "Copland",
 	"patterns": [
-		{
-			"include": "#inital_place"
-		},
-		{
-			"include": "#place"
-		},
-		{
-			"include": "#phrase"
-		},
-		{
-			"include": "#symbol"
-		},
-		{
-			"include": "#branch"
-		},
-		{
-			"include": "#comment"
-		}
+		{ "include": "#operators" },
+		{ "include": "#special-syntax"},
+		{ "include": "#phrase-measurement"}
 	],
 	"repository": {
-		"inital_place": {
-			"patterns": [{
-				"name": "inital_place.???.copland",
-				"match": "/\\*[a-zA-Z]*[0-9]*:/gm"
-			}]
+		"operators": {
+			"patterns": [
+				{
+					"name": "keyword.operator.at.copland",
+					"match": "@"
+				},
+				{
+					"name": "keyword.operator.linear.copland",
+					"match": "->"
+				},
+				{
+					"name": "keyword.operator.branch.sequential.copland",
+					"match": "-<-|\\+<-|-<\\+|\\+<\\+"
+				},
+				{
+					"name": "keyword.operator.branch.parallel.copland",
+					"match": "-~-|\\+~-|-~\\+|\\+~\\+"
+				}
+			]
 		},
-		"place": {
-			"patterns": [{
-					"name": "place.????.copland",
-					"match": "/\\b[a-zA-Z]*[0-9]*/gm"
-				}]
-		},
-		"phrase":{
-			"patterns": [{
-				"name": "phrase.???.copland",
-				"match": ""
-			}]
-		},
-		"symbol":{
-			"patterns": [{
-				"name": "symbol.????.copland",
-				"match": ""
-			}]
+		"special-syntax": {
+			"patterns": [
+				{
+					"name": "constant.language.copy.copland",
+					"match": "_"
+				}
+			]
 		}
 	},
 	"scopeName": "source.cop"
