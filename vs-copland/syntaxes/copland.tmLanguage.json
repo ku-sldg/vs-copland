@@ -4,9 +4,38 @@
 	"patterns": [
 		{ "include": "#operators" },
 		{ "include": "#special-syntax"},
-		{ "include": "#phrase-measurement"}
+		{ "include": "#phrase-measurement"},
+		{ "include": "#place"},
+		{ "include": "#symbol"}
 	],
 	"repository": {
+		"phrase-measurement": {
+			"begin": "\\b([a-z][a-zA-Z0-9_]*)\\b\\s+(\\b(?:[a-z][a-zA-Z0-9_]*|\\d+)\\b)\\s+(\\b[a-z][a-zA-Z0-9_]*\\b)",
+			"end": "(?=\\s|\\)|\\]|$)",
+			"patterns": [],
+			"captures": {
+				"1": {"name": "entity.name.function.symbol.source.copland" },
+				"2": {"name": "variable.parameter.place.copland"},
+				"3": {"name": "entity.name.function.symbol.target.copland"}
+			}
+
+		},
+		"symbol": {
+			"patterns": [
+				{
+					"name": "entity.name.function.symbol.copland",
+					"match": "\\b[a-z][a-zA-Z0-9_]*\\b"
+				}
+			]
+		},
+		"place": {
+			"patterns": [
+				{
+					"name": "variable.parameter.place.copland",
+					"match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b|\\b\\d+\\b"
+				}
+			]
+		},
 		"operators": {
 			"patterns": [
 				{
