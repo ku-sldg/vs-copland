@@ -4,7 +4,8 @@
 	"patterns": [
 		{ "include": "#operators" },
 		{ "include": "#special-syntax"},
-		{ "include": "#phrase-measurement"}
+		{ "include": "#phrase-measurement"},
+		{ "include": "#inital_place"}
 	],
 	"repository": {
 		"operators": {
@@ -23,7 +24,7 @@
 				},
 				{
 					"name": "keyword.operator.branch.parallel.copland",
-					"match": "-~-|\\+~-|-~\\+|\\+~\\+"
+					"match": "-"
 				}
 			]
 		},
@@ -32,6 +33,14 @@
 				{
 					"name": "constant.language.copy.copland",
 					"match": "_"
+				}
+			]
+		},
+		"inital_place":{
+			"patterns": [
+				{
+					"name": "meta.type.name.copland",
+					"match": "\\*[a-zA-Z]*[0-9]*:"
 				}
 			]
 		}
