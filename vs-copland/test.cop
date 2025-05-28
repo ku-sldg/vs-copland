@@ -3,6 +3,6 @@
 
 *p0: @p1 kim p2 ker -> ! -<- @p2 (vc p2 sys) -> !
 
-*p0: @p1 (((kim p2 ker) -> !) -<- (@p2 ((vc p2 sys) -> !)))
+*p0: @p1 (((kim_ p2 ker) -> !-<- (@p2 ((vc p2 sys) -> !)))
 
-*: @ p3 kim p2 ker ! @p4 [@p6 [ken team six]] {} # _ -> ! 
+*: @ p3 kim p2 ker ! @p4 [@p6 [ken team six]] {} # _ -> ! _ ojdfghj  

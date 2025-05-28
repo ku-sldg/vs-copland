@@ -35,7 +35,7 @@
 			"patterns": [
 				{
 					"name": "variable.parameter.place.copland",
-					"match": "\\b[a-zA-Z0-9_]+\\b|\\b\\d+\\b"
+					"match": "\\b[a-z0-9][a-zA-Z0-9_]*\\b|\\b\\d+\\b"
 				}
 			]
 		},
@@ -65,7 +65,7 @@
 		},
 		"inital_place":{
 			"patterns": [],
-			"begin": "(\\*[a-zA-Z0-9_]*),?\\s?([a-zA-Z0-9_]*)?",
+			"begin": "(\\*[a-z0-9]*[a-zA-Z0-9_]*),?\\s?([a-z0-9][a-zA-Z0-9]*)?",
 			"end": "\\s?:",
 			"captures": {
 				"1": { "name": "entity.name.type.initalplace.copland" },
@@ -74,7 +74,7 @@
 
 		},
 		"at_phrase":{
-			"begin": "(@)\\s?(\\b[a-zA-Z0-9_]*|\\d+\\b)",
+			"begin": "(@)\\s?(\\b[a-z0-9][a-zA-Z0-9_]*|\\d+\\b)",
 			"beginCaptures": {
 				"1": { "name": "keyword.phrase_operator.at.copland"},
 				"2": { "name": "variable.parameter.place.copland"}},
