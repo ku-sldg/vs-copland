@@ -2,7 +2,7 @@
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "Copland",
 	"patterns": [
-		{ "include": "comment"},
+		{ "include": "#cop_comment"},
 		{ "include": "#phrase_operators" },
 		{ "include": "#branch"},
 		{ "include": "#at_phrase"},
@@ -91,6 +91,11 @@
 					"name": "keyword.operator.branch.parallel.copland",
 					"match": "-~-|\\+~-|-~\\+|\\+~\\+"
 				}]
+		},
+		"cop_comment":{
+			"begin": "(\\%.*)",
+			"end": "$",
+			"captures": {"1": { "name":"comment.line.percentage.copland"}}
 		}
 	},
 	"scopeName": "source.cop"
