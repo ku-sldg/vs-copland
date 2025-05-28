@@ -4,6 +4,7 @@
 	"patterns": [
 		{ "include": "#operators" },
 		{ "include": "#special-syntax"},
+		{ "include": "#at_phrase"},
 		{ "include": "#phrase-measurement"},
 		{ "include": "#inital_place"},
 		{ "include": "#place"},
@@ -41,7 +42,7 @@
 			"patterns": [
 				{
 					"name": "keyword.operator.at.copland",
-					"match": "@"
+					"match": "%"
 				},
 				{
 					"name": "keyword.operator.linear.copland",
@@ -53,7 +54,7 @@
 				},
 				{
 					"name": "keyword.operator.branch.parallel.copland",
-					"match": "-"
+					"match": "-~-|\\+~-|-~\\+|\\+~\\+"
 				}
 			]
 		},
@@ -71,9 +72,15 @@
 			"end": "\\s?:",
 			"captures": {
 				"1": { "name": "entity.name.type.initalplace.copland" },
-				"2": {"name": "entity.name.type.initalplace.copland"}
+				"2": { "name": "entity.name.type.initalplace.copland"}
 			}
 
+		},
+		"at_phrase":{
+			"begin": "@\\s?(\\b[a-zA-Z0-9_]*|\\d+\\b)",
+			"beginCaptures": {"1": { "name": "variable.parameter.place.copland"}},
+			"end": "(?=\\s|\\)|\\]|$)",
+			"patterns": [{"include": "#phrase-measurement"}]
 		}
 	},
 	"scopeName": "source.cop"
