@@ -5,6 +5,7 @@
 		{ "include": "#operators" },
 		{ "include": "#special-syntax"},
 		{ "include": "#phrase-measurement"},
+		{ "include": "#inital_place"},
 		{ "include": "#place"},
 		{ "include": "#symbol"}
 	],
@@ -65,12 +66,14 @@
 			]
 		},
 		"inital_place":{
-			"patterns": [
-				{
-					"name": "meta.type.name.copland",
-					"match": "\\*[a-zA-Z]*[0-9]*:"
-				}
-			]
+			"patterns": [],
+			"begin": "(\\*[a-zA-Z0-9_]*),?\\s?([a-zA-Z0-9_]*)?",
+			"end": "\\s?:",
+			"captures": {
+				"1": { "name": "entity.name.type.initalplace.copland" },
+				"2": {"name": "entity.name.type.initalplace.copland"}
+			}
+
 		}
 	},
 	"scopeName": "source.cop"
