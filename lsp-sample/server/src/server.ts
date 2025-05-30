@@ -188,7 +188,7 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 			newToken = false;
 			if(part == " "){
 				//add num count here maybe add , and :
-			}else if (part == "_" && prev == ' '){
+			}else if (part == "_" && (prev == ' '||prev== '('||prev=='[')){
 				spot+= part;
 			}else if(/[A-Z]/.test(part) == false && /[a-z0-9]/.test(part) && prev != '_'){
 				spot+= part;
@@ -201,9 +201,9 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 		else{
 			//Molly remember to check that part was a space when assigning a type if it passes through the if statments
 			//ask if it would be better to do if statements like if spot == _ then follow with nested if else statments that can raise errors (probably but lowkey a lot of work)
-			if(spot == "_" && part != ' '){
+			if(spot == "_" && (part == ' ' || part == ']' || part == ')')== false){
 				//RAISE ERROR HERE WHEN YOU LEARN HOW TO 
-			}else if(/[a-z0-9_A-Z]*/.test(spot) && /[a-zA-Z_0-9]*/.test(part)){
+			}else if(/[a-z0-9_A-Z]+/.test(spot) && /[a-zA-Z_0-9]/.test(part)){
 				spot+=part;
 			}else if(part == '>' && spot == '-'){
 				spot+=part;
@@ -213,6 +213,19 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 				spot+= part;
 			}else if(spot == '{' && part != '}'){
 				//raise error here!!!!!
+			}else if(/\)\]/.test(part)){
+				if(spot =="_"){
+					type ='phrase_operators';
+					//start end stuff here
+					tokens.push({type, value: spot, start,end});
+					spot = part;
+				}else if(/[a-zA-Z0-9_]+/.test(spot)){
+					type = 'name';
+					//start end stuff here
+					tokens.push({type, value:spot, start, end});
+					spot = part;
+				}
+					//aditional checks here maybe???
 			}
 		}
 		if(/\*/.test(spot)){
@@ -239,6 +252,18 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 			tokens.push({type, value: spot, start, end});
 			prev = part;
 			spot = '';
+		}else if(part==','||part==":"){
+			type = 'inital_place';
+			//start and end stuff here
+			tokens.push({type, value: spot, start, end});
+			prev = part;
+			spot ='';
+		}else if(part==" " && /[a-zA-Z0-9_]+/.test(spot)){
+			type ='name';
+			//start and end stuff here
+			tokens.push({type, value:spot, start,end});
+			prev=part;
+			spot='';
 		}
     {return tokens;}
 }
