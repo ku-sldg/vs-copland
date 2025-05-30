@@ -167,21 +167,18 @@ interface CoplandToken {
 	end: number;
 }
 
-
-
-
 export function tokenizeCoplandLine(line: string): CoplandToken[] {
     const tokens: CoplandToken[] = [];
-    let position = 0;
+    const position = 0;
     const parts = line.trim().split('');
 	let spot = '';
 	let prev = '';
-	let start = 0;
-	let end = 0;
+	const start = 0;
+	const end = 0;
 	//maybe add list of terms to check against/ make a funct 
 //think abt comments %????
 	//ADD IN COUNTING TOMORROW!!!!!! dont forget to account for spaces
-    for (let part of parts) {
+    for (const part of parts) {
 		let newToken = false;
         let type: CoplandToken['type'] = 'unknown';
 		if(spot == ''){
@@ -197,7 +194,7 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 				spot+= part;
 			}else if(/[A-Z]/.test(part)){
 				//RAISE ERROR IDK HOW TO DO THAT YET
-			}else if(/\*|@|!|#|-|\+|{|\(|\[/.test(part)){
+			}else if(/\*|@|!|#|-|\+|{|\(|\[|\)|\]/.test(part)){
 				spot+=part;
 			}
 		}
@@ -224,14 +221,26 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 			tokens.push({type, value:spot, start, end});
 			prev = part;
 			spot ="";
-		}else if(/@|!|#/.test(spot)){
+		}else if(/@|!|#/.test(spot)|| spot== '{}'||spot=='->'){
 			type = 'phrase_operators';
 			//start end stuff here
 			tokens.push({type, value:spot, start, end});
 			prev = part;
 			spot = '';
-		}else if()
-    return tokens;
+		}else if(/\(|\[|\)|\]/.test(spot)){
+			type = 'grouping';
+			//start end stuff here
+			tokens.push({type,value:spot,start, end});
+			prev = part;
+			spot='';
+		}else if(spot =="_" && part == " "){
+			type = 'phrase_operators';
+			//start and end stuff here
+			tokens.push({type, value: spot, start, end});
+			prev = part;
+			spot = '';
+		}
+    {return tokens;}
 }
 //Remember to handle underscores and the -> function correctly!!!!!
 ///// MOLLY REMEMBER TO DOWNLOAD THE NPM STUFF LOOK AT VS CODE DOCUMENTATITON!!!!!
