@@ -161,7 +161,7 @@ documents.onDidChangeContent(change => {
 
 
 interface CoplandToken {
-	type: "phrase_operators"|'branch'|'inital_place'|'name'|'unknown'
+	type: "phrase_operators"|'branch'|'inital_place'|'name'|'grouping'|'unknown';
 	value: string;
 	start: number;
 	end: number;
@@ -179,35 +179,63 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 	let start = 0;
 	let end = 0;
 	//maybe add list of terms to check against/ make a funct 
-
+//think abt comments %????
 	//ADD IN COUNTING TOMORROW!!!!!! dont forget to account for spaces
     for (let part of parts) {
 		let newToken = false;
         let type: CoplandToken['type'] = 'unknown';
 		if(spot == ''){
-			newToken = true;
+			newToken = true; //a new token is either the start of a file or the first expression after a space
 		}
 		if(newToken){
-			if(/[A-Z_]/.test(part) && part != ' '){
+			newToken = false;
+			if(part == " "){
+				//add num count here maybe add , and :
+			}else if (part == "_" && prev == ' '){
 				spot+= part;
-			}
-			else if(/[A-Z_]/.test(part)){
+			}else if(/[A-Z]/.test(part) == false && /[a-z0-9]/.test(part) && prev != '_'){
+				spot+= part;
+			}else if(/[A-Z]/.test(part)){
 				//RAISE ERROR IDK HOW TO DO THAT YET
-			}
-		}else{
-			if(/[a-z0-9_A-Z]*/.test(spot) && /[a-zA-Z_0-9]*/.test(part)){
+			}else if(/\*|@|!|#|-|\+|{|\(|\[/.test(part)){
 				spot+=part;
 			}
-			else if(/\\*|@|{|}|!|#/){
-				sdfkljsdlkfkj //Remember to handle underscores and the -> function correctly!!!!!
+		}
+		else{
+			//Molly remember to check that part was a space when assigning a type if it passes through the if statments
+			//ask if it would be better to do if statements like if spot == _ then follow with nested if else statments that can raise errors (probably but lowkey a lot of work)
+			if(spot == "_" && part != ' '){
+				//RAISE ERROR HERE WHEN YOU LEARN HOW TO 
+			}else if(/[a-z0-9_A-Z]*/.test(spot) && /[a-zA-Z_0-9]*/.test(part)){
+				spot+=part;
+			}else if(part == '>' && spot == '-'){
+				spot+=part;
+			}else if(/<|-|\+|~/.test(part)&& /-|<|~|\+/.test(spot)){
+				spot+=part;
+			}else if(spot == '{' && part== "}"){
+				spot+= part;
+			}else if(spot == '{' && part != '}'){
+				//raise error here!!!!!
 			}
 		}
-
-
-    }
+		if(/\*/.test(spot)){
+			type = 'inital_place';
+			//start end stuff here
+			tokens.push({type, value:spot, start, end});
+			prev = part;
+			spot ="";
+		}else if(/@|!|#/.test(spot)){
+			type = 'phrase_operators';
+			//start end stuff here
+			tokens.push({type, value:spot, start, end});
+			prev = part;
+			spot = '';
+		}else if()
     return tokens;
 }
-
+//Remember to handle underscores and the -> function correctly!!!!!
+///// MOLLY REMEMBER TO DOWNLOAD THE NPM STUFF LOOK AT VS CODE DOCUMENTATITON!!!!!
+    }
 
 async function validateTextDocument(textDocument: TextDocument): Promise<Diagnostic[]> {
 	// In this simple example we get the settings for every validate run.
