@@ -169,29 +169,31 @@ interface CoplandToken {
 
 export function tokenizeCoplandLine(line: string): CoplandToken[] {
     const tokens: CoplandToken[] = [];
-    const position = 0;
+    let position = -1;
     const parts = line.trim().split('');
 	let spot = '';
 	let prev = '';
-	const start = 0;
-	const end = 0;
-	//maybe add list of terms to check against/ make a funct 
+	let start = 0;
+	let end = 0;
+	//maybe add list of terms to check against/ make a funct
+	const branches = ['-<-','+<-','-<+','+<+','-~-','+~-','-~+','+~+'];
 //think abt comments %????
 	//ADD IN COUNTING TOMORROW!!!!!! dont forget to account for spaces
     for (const part of parts) {
 		let newToken = false;
         let type: CoplandToken['type'] = 'unknown';
+		position ++;
 		if(spot == ''){
 			newToken = true; //a new token is either the start of a file or the first expression after a space
 		}
 		if(newToken){
-			newToken = false;
 			if(part == " "){
-				//add num count here maybe add , and :
+				start++;
 			}else if (part == "_" && (prev == ' '||prev== '('||prev=='[')){
 				spot+= part;
 			}else if(/[A-Z]/.test(part) == false && /[a-z0-9]/.test(part) && prev != '_'){
 				spot+= part;
+				
 			}else if(/[A-Z]/.test(part)){
 				//RAISE ERROR IDK HOW TO DO THAT YET
 			}else if(/\*|@|!|#|-|\+|{|\(|\[|\)|\]/.test(part)){
@@ -216,54 +218,70 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 			}else if(/\)\]/.test(part)){
 				if(spot =="_"){
 					type ='phrase_operators';
-					//start end stuff here
+					end = position -1;
 					tokens.push({type, value: spot, start,end});
 					spot = part;
+					start = position;
 				}else if(/[a-zA-Z0-9_]+/.test(spot)){
 					type = 'name';
-					//start end stuff here
+					end = position -1;
 					tokens.push({type, value:spot, start, end});
 					spot = part;
+					start = position;
 				}
 					//aditional checks here maybe???
 			}
 		}
 		if(/\*/.test(spot)){
 			type = 'inital_place';
-			//start end stuff here
+			end = position;
 			tokens.push({type, value:spot, start, end});
 			prev = part;
 			spot ="";
+			start = end +1;
 		}else if(/@|!|#/.test(spot)|| spot== '{}'||spot=='->'){
 			type = 'phrase_operators';
-			//start end stuff here
+			end = position;
 			tokens.push({type, value:spot, start, end});
 			prev = part;
 			spot = '';
+			start = end+1;
 		}else if(/\(|\[|\)|\]/.test(spot)){
 			type = 'grouping';
-			//start end stuff here
+			end = position;
 			tokens.push({type,value:spot,start, end});
 			prev = part;
 			spot='';
+			start = end +1;
 		}else if(spot =="_" && part == " "){
 			type = 'phrase_operators';
-			//start and end stuff here
+			end = position -1;
 			tokens.push({type, value: spot, start, end});
 			prev = part;
 			spot = '';
+			start = position +1;
 		}else if(part==','||part==":"){
 			type = 'inital_place';
-			//start and end stuff here
+			end = position -1;
 			tokens.push({type, value: spot, start, end});
 			prev = part;
 			spot ='';
+			start = position +1;
 		}else if(part==" " && /[a-zA-Z0-9_]+/.test(spot)){
 			type ='name';
-			//start and end stuff here
+			end = position -1;
 			tokens.push({type, value:spot, start,end});
 			prev=part;
 			spot='';
+			start = position +1;
+			position = start;
+		}else if(branches.includes(spot)){
+			type = 'branch';
+			end = position;
+			tokens.push({type, value:spot, start, end});
+			prev = part;
+			spot ='';
+			start = position +1;
 		}
     {return tokens;}
 }
@@ -277,12 +295,12 @@ async function validateTextDocument(textDocument: TextDocument): Promise<Diagnos
 
 	// The validator creates diagnostics for all uppercase words length 2 and more
 	const text = textDocument.getText();
-	const pattern = '[A-Z]';
+	const pattern = /\b[A-Z]{2,}\b/g;
 	let m: RegExpExecArray | null;
 //MOLLY THIS IS BROKEN FIX LATER FOR TESTING JSD:OGFJLDSKHJKFLSKDJF
 	let problems = 0;
 	const diagnostics: Diagnostic[] = [];
-	while ((m = text.startsWith(pattern)) && problems < settings.maxNumberOfProblems) {
+	while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
 		problems++;
 		const diagnostic: Diagnostic = {
 			severity: DiagnosticSeverity.Warning,
