@@ -219,7 +219,6 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 			}else if(spot == '{' && part != '}'){
 				throw new SyntaxError("Curly brackets can not contain anything in the language copland");
 			}else if(/\)|\]/.test(part)){
-				console.log('made it here!');
 				if(spot =="_"){
 					type ='phrase_operators';
 					end = position -1;
