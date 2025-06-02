@@ -180,6 +180,9 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 	//ADD IN COUNTING TOMORROW!!!!!! dont forget to account for spaces
     for (const part of parts) {
 		//maybe break if the first part is a % bc its a comment
+		if(part == '%'){
+			break;
+		}
 		let newToken = false;
         let type: CoplandToken['type'] = 'unknown';
 		position ++;
@@ -195,7 +198,7 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 				spot+= part;
 				
 			}else if(/[A-Z]/.test(part)){
-				//RAISE ERROR IDK HOW TO DO THAT YET
+				throw new SyntaxError('Names can not start with a capital letter');
 			}else if(/\*|@|!|#|-|\+|{|\(|\[|\)|\]/.test(part)){
 				spot+=part;
 			}
@@ -203,7 +206,7 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 		else{
 			//Molly remember to check that part was a space when assigning a type if it passes through the if statments
 			if(spot == "_" && (part == ' ' || part == ']' || part == ')')== false){
-				//RAISE ERROR HERE WHEN YOU LEARN HOW TO 
+				throw new SyntaxError('names can not start with an underscore, and copy can not be followed by anything other than a space or ) ]');
 			}else if(/[a-z0-9_A-Z]+/.test(spot) && /[a-zA-Z_0-9]/.test(part)){
 				spot+=part;
 			}else if(part == '>' && spot == '-'){
@@ -213,7 +216,7 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 			}else if(spot == '{' && part== "}"){
 				spot+= part;
 			}else if(spot == '{' && part != '}'){
-				//raise error here!!!!!
+				throw new SyntaxError("Curly brackets can not contain anything in the language copland");
 			}else if(/\)\]/.test(part)){
 				if(spot =="_"){
 					type ='phrase_operators';
