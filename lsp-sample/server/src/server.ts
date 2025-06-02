@@ -175,11 +175,11 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 	let prev = '';
 	let start = 0;
 	let end = 0;
-	//maybe add list of terms to check against/ make a funct
 	const branches = ['-<-','+<-','-<+','+<+','-~-','+~-','-~+','+~+'];
 //think abt comments %????
 	//ADD IN COUNTING TOMORROW!!!!!! dont forget to account for spaces
     for (const part of parts) {
+		//maybe break if the first part is a % bc its a comment
 		let newToken = false;
         let type: CoplandToken['type'] = 'unknown';
 		position ++;
@@ -202,7 +202,6 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 		}
 		else{
 			//Molly remember to check that part was a space when assigning a type if it passes through the if statments
-			//ask if it would be better to do if statements like if spot == _ then follow with nested if else statments that can raise errors (probably but lowkey a lot of work)
 			if(spot == "_" && (part == ' ' || part == ']' || part == ')')== false){
 				//RAISE ERROR HERE WHEN YOU LEARN HOW TO 
 			}else if(/[a-z0-9_A-Z]+/.test(spot) && /[a-zA-Z_0-9]/.test(part)){
@@ -283,7 +282,7 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 			spot ='';
 			start = position +1;
 		}
-    {return tokens;}
+    return tokens;
 }
 //Remember to handle underscores and the -> function correctly!!!!!
 ///// MOLLY REMEMBER TO DOWNLOAD THE NPM STUFF LOOK AT VS CODE DOCUMENTATITON!!!!!
