@@ -182,6 +182,7 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 		//maybe break if the first part is a % bc its a comment
 		if(part == '%'){
 			break;
+			//work on a better solution
 		}
 		let newToken = false;
         let type: CoplandToken['type'] = 'unknown';
@@ -217,7 +218,8 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 				spot+= part;
 			}else if(spot == '{' && part != '}'){
 				throw new SyntaxError("Curly brackets can not contain anything in the language copland");
-			}else if(/\)\]/.test(part)){
+			}else if(/\)|\]/.test(part)){
+				console.log('made it here!');
 				if(spot =="_"){
 					type ='phrase_operators';
 					end = position -1;
@@ -276,7 +278,6 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 			prev=part;
 			spot='';
 			start = position +1;
-			position = start;
 		}else if(branches.includes(spot)){
 			type = 'branch';
 			end = position;
@@ -284,9 +285,8 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 			prev = part;
 			spot ='';
 			start = position +1;
-		}
-    return tokens;
-}
+		}prev = part;
+}return tokens;
 //Remember to handle underscores and the -> function correctly!!!!!
 ///// MOLLY REMEMBER TO DOWNLOAD THE NPM STUFF LOOK AT VS CODE DOCUMENTATITON!!!!!
     }
@@ -297,6 +297,12 @@ async function validateTextDocument(textDocument: TextDocument): Promise<Diagnos
 
 	// The validator creates diagnostics for all uppercase words length 2 and more
 	const text = textDocument.getText();
+	//console.log(text);
+	const values = tokenizeCoplandLine(text);
+	console.log(values.length);
+	for (const item of values){
+		console.log(item);
+	}
 	const pattern = /\b[A-Z]{2,}\b/g;
 	let m: RegExpExecArray | null;
 //MOLLY THIS IS BROKEN FIX LATER FOR TESTING JSD:OGFJLDSKHJKFLSKDJF
