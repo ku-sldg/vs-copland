@@ -6,13 +6,13 @@
 		{ "include": "#phrase_operators" },
 		{ "include": "#branch"},
 		{ "include": "#at_phrase"},
-		{ "include": "#phrase-measurement"},
+		{ "include": "#phrase_measurement"},
 		{ "include": "#initial_place"},
 		{ "include": "#place"},
 		{ "include": "#symbol"}
 	],
 	"repository": {
-		"phrase-measurement": {
+		"phrase_measurement": {
 			"begin": "\\b([a-z][a-zA-Z0-9_]*)\\b\\s+(\\b(?:[a-z][a-zA-Z0-9_]*|\\d+)\\b)\\s+(\\b[a-z][a-zA-Z0-9_]*\\b)",
 			"end": "(?=\\s|\\)|\\]|$)",
 			"patterns": [],
@@ -89,7 +89,9 @@
 				"1": { "name": "keyword.phrase_operator.at.copland"},
 				"2": { "name": "variable.parameter.place.copland"}},
 			"end": "(?=\\s|\\)|\\]|$)",
-			"patterns": [{"include": "#phrase-measurement"}]
+			"patterns": [
+				{"include": "#phrase_measurement"}
+			]
 		},
 		"branch":{
 			"patterns": [{
@@ -104,7 +106,9 @@
 		"cop_comment":{
 			"begin": "(\\%.*)",
 			"end": "$",
-			"captures": {"1": { "name":"comment.line.percentage.copland"}}
+			"captures": {
+				"1": { "name":"comment.line.percentage.copland"}
+			}
 		}
 	},
 	"scopeName": "source.cop"
