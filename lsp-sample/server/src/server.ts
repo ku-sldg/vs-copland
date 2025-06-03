@@ -238,39 +238,39 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 					//aditional checks here maybe???
 			}
 		}
-		if(spot.includes("%") && part == '\n'){
+		if(spot.includes("%") && part == '\n'&& is_a_comment == true){
 			start = position+1;
 			spot = '';
 			is_a_comment = false;
-		}else if(/\*/.test(spot)){
+		}else if(/\*/.test(spot)&& is_a_comment == false){
 			type = 'initial_place';
 			end = position;
 			tokens.push({type, value:spot, start, end});
 			prev = part;
 			spot ="";
 			start = end +1;
-		}else if(/@|!|#/.test(spot)|| spot== '{}'||spot=='->'){
+		}else if(/@|!|#/.test(spot)|| spot== '{}'||spot=='->'&&is_a_comment == false){
 			type = 'phrase_operators';
 			end = position;
 			tokens.push({type, value:spot, start, end});
 			prev = part;
 			spot = '';
 			start = end+1;
-		}else if(/\(|\[|\)|\]/.test(spot)){
+		}else if(/\(|\[|\)|\]/.test(spot)&&is_a_comment == false){
 			type = 'grouping';
 			end = position;
 			tokens.push({type,value:spot,start, end});
 			prev = part;
 			spot='';
 			start = end +1;
-		}else if(spot =="_" && part == " "){
+		}else if(spot =="_" && part == " "&& is_a_comment == false){
 			type = 'phrase_operators';
 			end = position -1;
 			tokens.push({type, value: spot, start, end});
 			prev = part;
 			spot = '';
 			start = position +1;
-		}else if(part==','||part==":"){
+		}else if(part==','||part==":"&& is_a_comment == false){
 			type = 'initial_place';
 			end = position -1;
 			tokens.push({type, value: spot, start, end});
@@ -284,7 +284,7 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 			prev=part;
 			spot='';
 			start = position +1;
-		}else if(branches.includes(spot)){
+		}else if(branches.includes(spot)&& is_a_comment == false){
 			type = 'branch';
 			end = position;
 			tokens.push({type, value:spot, start, end});
