@@ -161,7 +161,7 @@ documents.onDidChangeContent(change => {
 
 
 interface CoplandToken {
-	type: "phrase_operators"|'branch'|'inital_place'|'name'|'grouping'|'unknown';
+	type: "phrase_operators"|'branch'|'initial_place'|'name'|'grouping'|'unknown';
 	value: string;
 	start: number;
 	end: number;
@@ -243,7 +243,7 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 			spot = '';
 			is_a_comment = false;
 		}else if(/\*/.test(spot)){
-			type = 'inital_place';
+			type = 'initial_place';
 			end = position;
 			tokens.push({type, value:spot, start, end});
 			prev = part;
@@ -271,7 +271,7 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 			spot = '';
 			start = position +1;
 		}else if(part==','||part==":"){
-			type = 'inital_place';
+			type = 'initial_place';
 			end = position -1;
 			tokens.push({type, value: spot, start, end});
 			prev = part;
@@ -303,13 +303,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<Diagnos
 
 	// The validator creates diagnostics for all uppercase words length 2 and more
 	const text = textDocument.getText();
-	//console.log(text);
-	//console.log('I am here');
-	const values = tokenizeCoplandLine(text);
-	console.log(values.length);
-	for (const item of values){
-		console.log(item);
-	}
+	
 	const pattern = /\b[A-Z]{2,}\b/g;
 	let m: RegExpExecArray | null;
 //MOLLY THIS IS BROKEN FIX LATER FOR TESTING JSD:OGFJLDSKHJKFLSKDJF
