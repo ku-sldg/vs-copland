@@ -184,6 +184,7 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 		//maybe break if the first part is a % bc its a comment
 		let newToken = false;
         let type: CoplandToken['type'] = 'unknown';
+		console.log(parts);
 		position ++;
 		if(part == "%"){
 			is_a_comment = true;
@@ -249,7 +250,7 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 			prev = part;
 			spot ="";
 			start = end +1;
-		}else if(/@|!|#/.test(spot)|| spot== '{}'||spot=='->'&&is_a_comment == false){
+		}else if((/@|!|#/.test(spot)|| spot== '{}'||spot=='->')&&is_a_comment == false){
 			type = 'phrase_operators';
 			end = position;
 			tokens.push({type, value:spot, start, end});
@@ -270,7 +271,7 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 			prev = part;
 			spot = '';
 			start = position +1;
-		}else if(part==','||part==":"&& is_a_comment == false){
+		}else if((part==','||part==":")&& is_a_comment == false){
 			type = 'initial_place';
 			end = position -1;
 			tokens.push({type, value: spot, start, end});
@@ -303,7 +304,8 @@ async function validateTextDocument(textDocument: TextDocument): Promise<Diagnos
 
 	// The validator creates diagnostics for all uppercase words length 2 and more
 	const text = textDocument.getText();
-	
+	const val = tokenizeCoplandLine(text);
+	console.log(val);
 	const pattern = /\b[A-Z]{2,}\b/g;
 	let m: RegExpExecArray | null;
 //MOLLY THIS IS BROKEN FIX LATER FOR TESTING JSD:OGFJLDSKHJKFLSKDJF
