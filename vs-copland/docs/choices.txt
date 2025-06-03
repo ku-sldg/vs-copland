@@ -2,8 +2,8 @@ Places: Most of the other defs need places to be defined, need to correctly mark
 
 Phrase: needs a place to be defined and also is an important component for a copland
 
-Symbol: self explanitory marking these corretly is important
+Symbol: self explanatory marking these correctly is important
 
-Branch: explanitory as well big enough seprate catagory
+Branch: explanatory as well big enough separate category
 
-Evidence: Needs to be defined in my mind to seperate it 
+Evidence: Needs to be defined in my mind to separate it 
