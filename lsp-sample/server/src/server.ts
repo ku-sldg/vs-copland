@@ -171,27 +171,28 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
     const tokens: CoplandToken[] = [];
     let position = -1;
     const parts = line.trim().split('');
+	//console.log(parts);
 	let spot = '';
 	let prev = '';
 	let start = 0;
 	let end = 0;
+	let is_a_comment = false;
 	const branches = ['-<-','+<-','-<+','+<+','-~-','+~-','-~+','+~+'];
 //think abt comments %????
 	//ADD IN COUNTING TOMORROW!!!!!! dont forget to account for spaces
     for (const part of parts) {
 		//maybe break if the first part is a % bc its a comment
-		if(part == '%'){
-			break;
-			//work on a better solution
-		}
 		let newToken = false;
         let type: CoplandToken['type'] = 'unknown';
 		position ++;
+		if(part == "%"){
+			is_a_comment = true;
+		}
 		if(spot == ''){
 			newToken = true; //a new token is either the start of a file or the first expression after a space
 		}
 		if(newToken){
-			if(part == " "){
+			if(/\s|\n|\t/.test(part)){
 				start++;
 			}else if (part == "_" && (prev == ' '||prev== '('||prev=='[')){
 				spot+= part;
@@ -200,13 +201,15 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 				
 			}else if(/[A-Z]/.test(part)){
 				throw new SyntaxError('Names can not start with a capital letter');
-			}else if(/\*|@|!|#|-|\+|{|\(|\[|\)|\]/.test(part)){
+			}else if(/\*|@|!|#|-|\+|{|\(|\[|\)|\]|%/.test(part)){
 				spot+=part;
 			}
 		}
 		else{
 			//Molly remember to check that part was a space when assigning a type if it passes through the if statments
-			if(spot == "_" && (part == ' ' || part == ']' || part == ')')== false){
+			if(spot.includes('%')){
+				spot+= part;
+			}else if(spot == "_" && (part == ' ' || part == ']' || part == ')')== false){
 				throw new SyntaxError('names can not start with an underscore, and copy can not be followed by anything other than a space or ) ]');
 			}else if(/[a-z0-9_A-Z]+/.test(spot) && /[a-zA-Z_0-9]/.test(part)){
 				spot+=part;
@@ -235,7 +238,11 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 					//aditional checks here maybe???
 			}
 		}
-		if(/\*/.test(spot)){
+		if(spot.includes("%") && part == '\n'){
+			start = position+1;
+			spot = '';
+			is_a_comment = false;
+		}else if(/\*/.test(spot)){
 			type = 'inital_place';
 			end = position;
 			tokens.push({type, value:spot, start, end});
@@ -270,7 +277,7 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 			prev = part;
 			spot ='';
 			start = position +1;
-		}else if(part==" " && /[a-zA-Z0-9_]+/.test(spot)){
+		}else if(part==" " && /[a-zA-Z0-9_]+/.test(spot)&& is_a_comment == false){
 			type ='name';
 			end = position -1;
 			tokens.push({type, value:spot, start,end});
@@ -297,6 +304,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<Diagnos
 	// The validator creates diagnostics for all uppercase words length 2 and more
 	const text = textDocument.getText();
 	//console.log(text);
+	//console.log('I am here');
 	const values = tokenizeCoplandLine(text);
 	console.log(values.length);
 	for (const item of values){
