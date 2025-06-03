@@ -7,7 +7,7 @@
 		{ "include": "#branch"},
 		{ "include": "#at_phrase"},
 		{ "include": "#phrase-measurement"},
-		{ "include": "#inital_place"},
+		{ "include": "#initial_place"},
 		{ "include": "#place"},
 		{ "include": "#symbol"}
 	],
@@ -63,16 +63,25 @@
 				}
 			]
 		},
-		"inital_place":{
-			"patterns": [],
+		"initial_place":{
 			"begin": "(\\*)([a-z0-9][a-zA-Z0-9_]*)?,?\\s?([a-z0-9][a-zA-Z0-9]*)?",
 			"end": "\\s?:",
-			"captures": {
-				"1": { "name": "entity.name.type.initalplace.copland" },
-				"2": { "name": "entity.name.type.initalplace.copland"},
-				"3": { "name": "entity.name.type.initalplace.copland"}
-			}
-
+			"patterns": [
+				{
+					"match": "\\*([a-z0-9][a-zA-Z0-9_]*)",
+					"captures": {
+						"1": { "name": "entity.name.type.initial_place.copland"}
+					}
+					
+				},
+				{
+					"match": "([a-z0-9][a-zA-Z0-9_]*)",
+					"captures": {
+						"1": { "name": "entity.name.type.initial_place.copland"}
+					}
+				}
+			],
+			"name": "entity.name.type.initial_place.copland"
 		},
 		"at_phrase":{
 			"begin": "(@)\\s?(\\b[a-z0-9][a-zA-Z0-9_]*|\\d+\\b)",
