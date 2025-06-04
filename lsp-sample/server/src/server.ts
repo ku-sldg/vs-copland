@@ -170,7 +170,7 @@ interface CoplandToken {
 
 interface badToken {
 	error_start: number;
-	error_end:number;
+	error_end: number;
 	error_reason: string;
 }
 
@@ -186,19 +186,22 @@ class TokenError extends Error {
 }
 
 
-function throwTokenError(inital_spot: number, end_spot:number, issue: string) {
-	throw new TokenError('Syntax Issue', {
-		error_start: inital_spot,
-		error_end: end_spot,
-		error_reason: issue
-	});
+/*
+// Unused function: throwTokenError
+function throwTokenError(position: number, message: string): void {
+	throw new Error(`Token error at position ${position}: ${message}`);
+}
+*/
+class TokenizedData {
+	public tokens: CoplandToken[];
+	public issues: TokenError[];
+	constructor(tokens: CoplandToken[], issues: TokenError[]) {
+		this.tokens = tokens;
+		this.issues = issues;
+	}
 }
 
-class TokenizedData{
-	constructor(tokens: CoplandToken[], issues: TokenError[]){}
-}
-
-export function tokenizeCoplandLine(line: string): TokenizedData{
+export function tokenizeCoplandLine(line: string): TokenizedData {
 	const tokens: CoplandToken[] = [];
 	let position = -1;
 	const parts = line.trim().split('');
@@ -208,7 +211,7 @@ export function tokenizeCoplandLine(line: string): TokenizedData{
 	let start = 0;
 	let end = 0;
 	let is_a_comment = false;
-	const problems: TokenError[]=[];
+	const problems: TokenError[] = [];
 	let clean = 0;
 	const branches = ['-<-', '+<-', '-<+', '+<+', '-~-', '+~-', '-~+', '+~+'];
 	//console.log(parts);
@@ -219,7 +222,7 @@ export function tokenizeCoplandLine(line: string): TokenizedData{
 		let newToken = false;
 		let type: CoplandToken['type'] = 'unknown';
 		position++;
-		if(clean != 0){
+		if (clean != 0) {
 			clean--;
 			spot = '';
 			continue;
@@ -240,9 +243,9 @@ export function tokenizeCoplandLine(line: string): TokenizedData{
 
 			} else if (/[A-Z]/.test(part)) {
 				start = position;
-				clean = indexOfNextWhitespace(parts,start);
-				problems.push(new TokenError("Syntax Error", {error_start: start, error_end: start+clean, error_reason: 'Names can not start with a capital letter'}));
-				start += clean+1;
+				clean = indexOfNextWhitespace(parts, start);
+				problems.push(new TokenError("Syntax Error", { error_start: start, error_end: start + clean, error_reason: 'Names can not start with a capital letter' }));
+				start += clean + 1;
 				//throwTokenError(start, 'Names can not start with a capital letter');
 
 				//Append error obj to errors list 
@@ -256,9 +259,9 @@ export function tokenizeCoplandLine(line: string): TokenizedData{
 				spot += part;
 			} else if (spot == "_" && (part == ' ' || part == ']' || part == ')') == false) {
 				start = position - 1;
-				clean = indexOfNextWhitespace(parts,start);
-				problems.push(new TokenError("Syntax Error",{error_start:start, error_end:start+clean, error_reason: 'names can not start with an underscore, and copy can not be followed by anything other than a space or ) ]'}));
-				start += clean+1;
+				clean = indexOfNextWhitespace(parts, start);
+				problems.push(new TokenError("Syntax Error", { error_start: start, error_end: start + clean, error_reason: 'names can not start with an underscore, and copy can not be followed by anything other than a space or ) ]' }));
+				start += clean + 1;
 				//throwTokenError(start, 'names can not start with an underscore, and copy can not be followed by anything other than a space or ) ]');
 			} else if (/[a-z0-9_A-Z]+/.test(spot) && /[a-zA-Z_0-9]/.test(part)) {
 				spot += part;
@@ -270,9 +273,9 @@ export function tokenizeCoplandLine(line: string): TokenizedData{
 				spot += part;
 			} else if (spot == '{' && part != '}') {
 				start = position - 1;
-				clean= indexOfNextWhitespace(parts,start);
-				problems.push(new TokenError("Syntax Error",{error_start: start,error_end:start+clean, error_reason: "Curly brackets can not contain anything in the language copland"}));
-				start += clean+2;
+				clean = indexOfNextWhitespace(parts, start);
+				problems.push(new TokenError("Syntax Error", { error_start: start, error_end: start + clean, error_reason: "Null can not contain any terms, curly brackets are a key term in copland" }));
+				start += clean + 2;
 				//throwTokenError(start, "Curly brackets can not contain anything in the language copland");
 			} else if (/\)|\]/.test(part)) {
 				if (spot == "_") {
@@ -345,10 +348,11 @@ export function tokenizeCoplandLine(line: string): TokenizedData{
 			spot = '';
 			start = position + 1;
 		} prev = part;
-	
-	}console.log(tokens);
-	console.log(problems);
-	return  new TokenizedData(tokens, problems);
+
+	} 
+	//console.log(tokens);
+	//console.log(problems);
+	return new TokenizedData(tokens, problems);
 	//Remember to handle underscores and the -> function correctly!!!!!
 	///// MOLLY REMEMBER TO DOWNLOAD THE NPM STUFF LOOK AT VS CODE DOCUMENTATITON!!!!!
 }
@@ -375,76 +379,81 @@ export function indexOfNextWhitespace(data: string[], index: number): number {
 //MOLLY YOU NEED TO ADD IN MAX ERRORS AND YOUR COUNT IS OFF BY 1! for the redlines
 
 async function addUnderlines(textDocument: TextDocument): Promise<Diagnostic[]> {
-	const settings = await getDocumentSettings(textDocument.uri);
+	//const settings = await getDocumentSettings(textDocument.uri);
 	const text = textDocument.getText();
 	const info: Diagnostic[] = [];
 	//const brokenUp = text.trim().split('');
-	let problems = 0;
-	while (problems < settings.maxNumberOfProblems) {
+	const vals = tokenizeCoplandLine(text);
+	const array_of_issues = vals.issues;
+	//while (problems < settings.maxNumberOfProblems && array_of_issues.length > 0) {
 		//console.log(info);
-		problems++;
-		try {
-			console.log("Ran tokenizer");
-			const vals = tokenizeCoplandLine(text);
-			console.log(vals);
-		}
-		catch (error: unknown) {
-			if (error instanceof TokenError) {
-				const problem: Diagnostic = {
-					severity: DiagnosticSeverity.Error,
-					range: {
-						start: textDocument.positionAt(error.data.error_start),
-						end: textDocument.positionAt(error.data.error_start + error.data.error_end)
-					},
-					message: error.data.error_reason,
-					source: 'ex'
-				};
-				info.push(problem);
-			}
-		} 
-	} return info;
-
-}
-
-
-async function validateTextDocument(textDocument: TextDocument): Promise<Diagnostic[]> {
-	// In this simple example we get the settings for every validate run.
-	const settings = await getDocumentSettings(textDocument.uri);
-
-	// The validator creates diagnostics for all uppercase words length 2 and more
-	const text = textDocument.getText();
-	const pattern = /\b[A-Z]{2,}\b/g;
-	let m: RegExpExecArray | null;
-	//MOLLY THIS IS BROKEN FIX LATER FOR TESTING JSD:OGFJLDSKHJKFLSKDJF
-	let problems = 0;
-	const diagnostics: Diagnostic[] = [];
-	while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
-		problems++;
-		const diagnostic: Diagnostic = {
-			severity: DiagnosticSeverity.Warning,
-			range: {
-				start: textDocument.positionAt(m.index),
-				end: textDocument.positionAt(m.index + m[0].length)
-			},
-			message: `${m[0]} starts with an uppercase.`,
-			source: 'ex'
-		};
-		if (hasDiagnosticRelatedInformationCapability) {
-			diagnostic.relatedInformation = [
-				{
-					location: {
-						uri: textDocument.uri,
-						range: Object.assign({}, diagnostic.range)
-					},
-					message: 'You can not start a place or symbol with an uppercase letter'
+		for (const prob of array_of_issues) {
+			const problem: Diagnostic = {
+				severity: DiagnosticSeverity.Error,
+				range: {
+					start: textDocument.positionAt(prob.data.error_start),
+					end: textDocument.positionAt(prob.data.error_end+1)
 				},
+				message: prob.data.error_reason,
+				source: 'ex'
 
-			];
-		}
-		diagnostics.push(diagnostic);
-	}
-	return diagnostics;
+			};
+			if(hasDiagnosticRelatedInformationCapability){
+				problem.relatedInformation=[
+					{
+						location:{
+							uri: textDocument.uri,
+							range: Object.assign({},problem.range)
+						},
+						message: "See copland syntax for more information."
+					}
+				];
+			}
+
+			info.push(problem);
+	} return info;
 }
+
+
+
+// async function validateTextDocument(textDocument: TextDocument): Promise<Diagnostic[]> {
+// 	// In this simple example we get the settings for every validate run.
+// 	const settings = await getDocumentSettings(textDocument.uri);
+
+// 	// The validator creates diagnostics for all uppercase words length 2 and more
+// 	const text = textDocument.getText();
+// 	const pattern = /\b[A-Z]{2,}\b/g;
+// 	let m: RegExpExecArray | null;
+// 	//MOLLY THIS IS BROKEN FIX LATER FOR TESTING JSD:OGFJLDSKHJKFLSKDJF
+// 	let problems = 0;
+// 	const diagnostics: Diagnostic[] = [];
+// 	while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
+// 		problems++;
+// 		const diagnostic: Diagnostic = {
+// 			severity: DiagnosticSeverity.Warning,
+// 			range: {
+// 				start: textDocument.positionAt(m.index),
+// 				end: textDocument.positionAt(m.index + m[0].length)
+// 			},
+// 			message: `${m[0]} starts with an uppercase.`,
+// 			source: 'ex'
+// 		};
+// 		if (hasDiagnosticRelatedInformationCapability) {
+// 			diagnostic.relatedInformation = [
+// 				{
+// 					location: {
+// 						uri: textDocument.uri,
+// 						range: Object.assign({}, diagnostic.range)
+// 					},
+// 					message: 'You can not start a place or symbol with an uppercase letter'
+// 				},
+
+// 			];
+// 		}
+// 		diagnostics.push(diagnostic);
+// 	}
+// 	return diagnostics;
+// }
 
 connection.onDidChangeWatchedFiles(_change => {
 	// Monitored files have change in VSCode
