@@ -23,9 +23,15 @@
 	"contributes": {
 		"languages": [{
 			"id": "copland",
-			"aliases": ["Copland"],
-			"extensions": [".cop"]
+			"aliases": ["Copland", "copland"],
+			"extensions": [".cop"],
+			"configuration": "./language-configuration.json"
 		}],
+		"grammars": [{
+      		"language": "copland",
+      		"scopeName": "source.cop",
+      		"path": "./syntaxes/copland.tmLanguage.json"
+    	}],
 		"configuration": {
 			"type": "object",
 			"title": "Example configuration",
