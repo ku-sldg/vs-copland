@@ -141,7 +141,8 @@ connection.languages.diagnostics.on(async (params) => {
 	if (document !== undefined) {
 		return {
 			kind: DocumentDiagnosticReportKind.Full,
-			items: await validateTextDocument(document)
+			items: await addUnderlines(document)
+			//MOLLY THIS USED TO BE validateTextDocument
 		} satisfies DocumentDiagnosticReport;
 	} else {
 		// We don't know the document. We can either try to read it from disk
@@ -156,7 +157,7 @@ connection.languages.diagnostics.on(async (params) => {
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(change => {
-	validateTextDocument(change.document);
+	addUnderlines(change.document);
 });
 
 
@@ -167,9 +168,34 @@ interface CoplandToken {
 	end: number;
 }
 
-export function tokenizeCoplandLine(line: string): CoplandToken[] {
+interface badToken{
+	error_start: number;
+	error_reason: string;
+}
+
+class TokenError extends Error{
+	public data: badToken;
+
+	constructor(message: string, data:badToken){
+		super(message);
+		this.name = "TokenError";
+		Object.setPrototypeOf(this, TokenError.prototype);
+		this.data = data;
+	}
+}
+
+
+function throwTokenError(inital_spot: number, issue: string){
+	throw new TokenError('Syntax Issue',{
+		error_start: inital_spot,
+		error_reason: issue 
+	});
+}
+
+export function tokenizeCoplandLine(line: string, index: number): CoplandToken[] {
     const tokens: CoplandToken[] = [];
     let position = -1;
+	line = line.slice(index);
     const parts = line.trim().split('');
 	//console.log(parts);
 	let spot = '';
@@ -184,7 +210,6 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 		//maybe break if the first part is a % bc its a comment
 		let newToken = false;
         let type: CoplandToken['type'] = 'unknown';
-		console.log(parts);
 		position ++;
 		if(part == "%"){
 			is_a_comment = true;
@@ -201,7 +226,8 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 				spot+= part;
 				
 			}else if(/[A-Z]/.test(part)){
-				throw new SyntaxError('Names can not start with a capital letter');
+				start = position; 
+				throwTokenError(start, 'Names can not start with a capital letter');
 			}else if(/\*|@|!|#|-|\+|{|\(|\[|\)|\]|%/.test(part)){
 				spot+=part;
 			}
@@ -211,7 +237,8 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 			if(spot.includes('%')){
 				spot+= part;
 			}else if(spot == "_" && (part == ' ' || part == ']' || part == ')')== false){
-				throw new SyntaxError('names can not start with an underscore, and copy can not be followed by anything other than a space or ) ]');
+				start = position-1;
+				throwTokenError(start,'names can not start with an underscore, and copy can not be followed by anything other than a space or ) ]');
 			}else if(/[a-z0-9_A-Z]+/.test(spot) && /[a-zA-Z_0-9]/.test(part)){
 				spot+=part;
 			}else if(part == '>' && spot == '-'){
@@ -221,7 +248,8 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 			}else if(spot == '{' && part== "}"){
 				spot+= part;
 			}else if(spot == '{' && part != '}'){
-				throw new SyntaxError("Curly brackets can not contain anything in the language copland");
+				start = position-1;
+				throwTokenError(start,"Curly brackets can not contain anything in the language copland");
 			}else if(/\)|\]/.test(part)){
 				if(spot =="_"){
 					type ='phrase_operators';
@@ -298,14 +326,65 @@ export function tokenizeCoplandLine(line: string): CoplandToken[] {
 ///// MOLLY REMEMBER TO DOWNLOAD THE NPM STUFF LOOK AT VS CODE DOCUMENTATITON!!!!!
     }
 
+export function indexOfNextWhitespace(data: string[], index: number): number{
+	let terms= 0;
+	const letters = data.slice(index);
+	for(const letter of letters){
+		if(letter != " "){
+			terms++;
+		}
+		else{
+			break;
+		}
+	}
+	if(terms != 0){
+		return terms;
+	}
+	else{
+		return 0;
+	}
+} 
+
+//MOLLY YOU NEED TO ADD IN MAX ERRORS AND YOUR COUNT IS OFF BY 1! for the redlines
+
+async function addUnderlines(textDocument:TextDocument): Promise<Diagnostic[]> {
+	const settings = await getDocumentSettings(textDocument.uri);
+	const text = textDocument.getText();
+	const info: Diagnostic[]=[];
+	const brokenUp = text.trim().split('');
+	let problems = 0;
+	let past_check = 0;
+	while (problems < settings.maxNumberOfProblems){
+	problems++;
+	try{
+		const vals = tokenizeCoplandLine(text,past_check);
+	}
+	catch(error: unknown ){
+		if(error instanceof TokenError){
+			const problem: Diagnostic ={
+				severity: DiagnosticSeverity.Error,
+				range: {
+					start: textDocument.positionAt(error.data.error_start),
+					end: textDocument.positionAt(error.data.error_start +indexOfNextWhitespace(brokenUp,error.data.error_start))
+				},
+				message: error.data.error_reason,
+				source: 'ex'
+			};
+			past_check =indexOfNextWhitespace(brokenUp,error.data.error_start);
+			info.push(problem);
+			}
+		} return info;
+	}
+
+}
+
+
 async function validateTextDocument(textDocument: TextDocument): Promise<Diagnostic[]> {
 	// In this simple example we get the settings for every validate run.
 	const settings = await getDocumentSettings(textDocument.uri);
 
 	// The validator creates diagnostics for all uppercase words length 2 and more
 	const text = textDocument.getText();
-	const val = tokenizeCoplandLine(text);
-	console.log(val);
 	const pattern = /\b[A-Z]{2,}\b/g;
 	let m: RegExpExecArray | null;
 //MOLLY THIS IS BROKEN FIX LATER FOR TESTING JSD:OGFJLDSKHJKFLSKDJF
