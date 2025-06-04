@@ -411,6 +411,7 @@ async function addUnderlines(textDocument: TextDocument): Promise<Diagnostic[]> 
 			}
 
 			info.push(problem);
+
 	} return info;
 }
 
