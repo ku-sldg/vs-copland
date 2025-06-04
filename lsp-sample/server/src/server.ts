@@ -162,21 +162,22 @@ documents.onDidChangeContent(change => {
 
 
 interface CoplandToken {
-	type: "phrase_operators"|'branch'|'initial_place'|'name'|'grouping'|'unknown';
+	type: "phrase_operators" | 'branch' | 'initial_place' | 'name' | 'grouping' | 'unknown';
 	value: string;
 	start: number;
 	end: number;
 }
 
-interface badToken{
+interface badToken {
 	error_start: number;
+	error_end:number;
 	error_reason: string;
 }
 
-class TokenError extends Error{
+class TokenError extends Error {
 	public data: badToken;
 
-	constructor(message: string, data:badToken){
+	constructor(message: string, data: badToken) {
 		super(message);
 		this.name = "TokenError";
 		Object.setPrototypeOf(this, TokenError.prototype);
@@ -185,196 +186,223 @@ class TokenError extends Error{
 }
 
 
-function throwTokenError(inital_spot: number, issue: string){
-	throw new TokenError('Syntax Issue',{
+function throwTokenError(inital_spot: number, end_spot:number, issue: string) {
+	throw new TokenError('Syntax Issue', {
 		error_start: inital_spot,
-		error_reason: issue 
+		error_end: end_spot,
+		error_reason: issue
 	});
 }
 
-export function tokenizeCoplandLine(line: string, index: number): CoplandToken[] {
-    const tokens: CoplandToken[] = [];
-    let position = -1;
-	line = line.slice(index);
-    const parts = line.trim().split('');
+class TokenizedData{
+	constructor(tokens: CoplandToken[], issues: TokenError[]){}
+}
+
+export function tokenizeCoplandLine(line: string): TokenizedData{
+	const tokens: CoplandToken[] = [];
+	let position = -1;
+	const parts = line.trim().split('');
 	//console.log(parts);
 	let spot = '';
 	let prev = '';
 	let start = 0;
 	let end = 0;
 	let is_a_comment = false;
-	const branches = ['-<-','+<-','-<+','+<+','-~-','+~-','-~+','+~+'];
-//think abt comments %????
+	const problems: TokenError[]=[];
+	let clean = 0;
+	const branches = ['-<-', '+<-', '-<+', '+<+', '-~-', '+~-', '-~+', '+~+'];
+	//console.log(parts);
+	//think abt comments %????
 	//ADD IN COUNTING TOMORROW!!!!!! dont forget to account for spaces
-    for (const part of parts) {
+	for (const part of parts) {
 		//maybe break if the first part is a % bc its a comment
 		let newToken = false;
-        let type: CoplandToken['type'] = 'unknown';
-		position ++;
-		if(part == "%"){
+		let type: CoplandToken['type'] = 'unknown';
+		position++;
+		if(clean != 0){
+			clean--;
+			spot = '';
+			continue;
+		}
+		if (part == "%") {
 			is_a_comment = true;
 		}
-		if(spot == ''){
+		if (spot == '') {
 			newToken = true; //a new token is either the start of a file or the first expression after a space
 		}
-		if(newToken){
-			if(/\s|\n|\t/.test(part)){
+		if (newToken) {
+			if (/\s|\n|\t/.test(part)) {
 				start++;
-			}else if (part == "_" && (prev == ' '||prev== '('||prev=='[')){
-				spot+= part;
-			}else if(/[A-Z]/.test(part) == false && /[a-z0-9]/.test(part) && prev != '_'){
-				spot+= part;
-				
-			}else if(/[A-Z]/.test(part)){
-				start = position; 
-				throwTokenError(start, 'Names can not start with a capital letter');
-			}else if(/\*|@|!|#|-|\+|{|\(|\[|\)|\]|%/.test(part)){
-				spot+=part;
+			} else if (part == "_" && (prev == ' ' || prev == '(' || prev == '[')) {
+				spot += part;
+			} else if (/[A-Z]/.test(part) == false && /[a-z0-9]/.test(part) && prev != '_') {
+				spot += part;
+
+			} else if (/[A-Z]/.test(part)) {
+				start = position;
+				clean = indexOfNextWhitespace(parts,start);
+				problems.push(new TokenError("Syntax Error", {error_start: start, error_end: start+clean, error_reason: 'Names can not start with a capital letter'}));
+				start += clean+1;
+				//throwTokenError(start, 'Names can not start with a capital letter');
+
+				//Append error obj to errors list 
+			} else if (/\*|@|!|#|-|\+|{|\(|\[|\)|\]|%/.test(part)) {
+				spot += part;
 			}
 		}
-		else{
+		else {
 			//Molly remember to check that part was a space when assigning a type if it passes through the if statments
-			if(spot.includes('%')){
-				spot+= part;
-			}else if(spot == "_" && (part == ' ' || part == ']' || part == ')')== false){
-				start = position-1;
-				throwTokenError(start,'names can not start with an underscore, and copy can not be followed by anything other than a space or ) ]');
-			}else if(/[a-z0-9_A-Z]+/.test(spot) && /[a-zA-Z_0-9]/.test(part)){
-				spot+=part;
-			}else if(part == '>' && spot == '-'){
-				spot+=part;
-			}else if(/<|-|\+|~/.test(part)&& /-|<|~|\+/.test(spot)){
-				spot+=part;
-			}else if(spot == '{' && part== "}"){
-				spot+= part;
-			}else if(spot == '{' && part != '}'){
-				start = position-1;
-				throwTokenError(start,"Curly brackets can not contain anything in the language copland");
-			}else if(/\)|\]/.test(part)){
-				if(spot =="_"){
-					type ='phrase_operators';
-					end = position -1;
-					tokens.push({type, value: spot, start,end});
+			if (spot.includes('%')) {
+				spot += part;
+			} else if (spot == "_" && (part == ' ' || part == ']' || part == ')') == false) {
+				start = position - 1;
+				clean = indexOfNextWhitespace(parts,start);
+				problems.push(new TokenError("Syntax Error",{error_start:start, error_end:start+clean, error_reason: 'names can not start with an underscore, and copy can not be followed by anything other than a space or ) ]'}));
+				start += clean+1;
+				//throwTokenError(start, 'names can not start with an underscore, and copy can not be followed by anything other than a space or ) ]');
+			} else if (/[a-z0-9_A-Z]+/.test(spot) && /[a-zA-Z_0-9]/.test(part)) {
+				spot += part;
+			} else if (part == '>' && spot == '-') {
+				spot += part;
+			} else if (/<|-|\+|~/.test(part) && /-|<|~|\+/.test(spot)) {
+				spot += part;
+			} else if (spot == '{' && part == "}") {
+				spot += part;
+			} else if (spot == '{' && part != '}') {
+				start = position - 1;
+				clean= indexOfNextWhitespace(parts,start);
+				problems.push(new TokenError("Syntax Error",{error_start: start,error_end:start+clean, error_reason: "Curly brackets can not contain anything in the language copland"}));
+				start += clean+2;
+				//throwTokenError(start, "Curly brackets can not contain anything in the language copland");
+			} else if (/\)|\]/.test(part)) {
+				if (spot == "_") {
+					type = 'phrase_operators';
+					end = position - 1;
+					tokens.push({ type, value: spot, start, end });
 					spot = part;
 					start = position;
-				}else if(/[a-zA-Z0-9_]+/.test(spot)){
+				} else if (/[a-zA-Z0-9_]+/.test(spot)) {
 					type = 'name';
-					end = position -1;
-					tokens.push({type, value:spot, start, end});
+					end = position - 1;
+					tokens.push({ type, value: spot, start, end });
 					spot = part;
 					start = position;
 				}
-					//aditional checks here maybe???
+				//aditional checks here maybe???
 			}
 		}
-		if(spot.includes("%") && part == '\n'&& is_a_comment == true){
-			start = position+1;
+		if (spot.includes("%") && part == '\n' && is_a_comment == true) {
+			start = position + 1;
 			spot = '';
 			is_a_comment = false;
-		}else if(/\*/.test(spot)&& is_a_comment == false){
+		} else if (/\*/.test(spot) && is_a_comment == false) {
 			type = 'initial_place';
 			end = position;
-			tokens.push({type, value:spot, start, end});
+			tokens.push({ type, value: spot, start, end });
 			prev = part;
-			spot ="";
-			start = end +1;
-		}else if((/@|!|#/.test(spot)|| spot== '{}'||spot=='->')&&is_a_comment == false){
+			spot = "";
+			start = end + 1;
+		} else if ((/@|!|#/.test(spot) || spot == '{}' || spot == '->') && is_a_comment == false) {
 			type = 'phrase_operators';
 			end = position;
-			tokens.push({type, value:spot, start, end});
+			tokens.push({ type, value: spot, start, end });
 			prev = part;
 			spot = '';
-			start = end+1;
-		}else if(/\(|\[|\)|\]/.test(spot)&&is_a_comment == false){
+			start = end + 1;
+		} else if (/\(|\[|\)|\]/.test(spot) && is_a_comment == false) {
 			type = 'grouping';
 			end = position;
-			tokens.push({type,value:spot,start, end});
-			prev = part;
-			spot='';
-			start = end +1;
-		}else if(spot =="_" && part == " "&& is_a_comment == false){
-			type = 'phrase_operators';
-			end = position -1;
-			tokens.push({type, value: spot, start, end});
+			tokens.push({ type, value: spot, start, end });
 			prev = part;
 			spot = '';
-			start = position +1;
-		}else if((part==','||part==":")&& is_a_comment == false){
-			type = 'initial_place';
-			end = position -1;
-			tokens.push({type, value: spot, start, end});
+			start = end + 1;
+		} else if (spot == "_" && part == " " && is_a_comment == false) {
+			type = 'phrase_operators';
+			end = position - 1;
+			tokens.push({ type, value: spot, start, end });
 			prev = part;
-			spot ='';
-			start = position +1;
-		}else if(part==" " && /[a-zA-Z0-9_]+/.test(spot)&& is_a_comment == false){
-			type ='name';
-			end = position -1;
-			tokens.push({type, value:spot, start,end});
-			prev=part;
-			spot='';
-			start = position +1;
-		}else if(branches.includes(spot)&& is_a_comment == false){
+			spot = '';
+			start = position + 1;
+		} else if ((part == ',' || part == ":") && is_a_comment == false) {
+			type = 'initial_place';
+			end = position - 1;
+			tokens.push({ type, value: spot, start, end });
+			prev = part;
+			spot = '';
+			start = position + 1;
+		} else if (part == " " && /[a-zA-Z0-9_]+/.test(spot) && is_a_comment == false) {
+			type = 'name';
+			end = position - 1;
+			tokens.push({ type, value: spot, start, end });
+			prev = part;
+			spot = '';
+			start = position + 1;
+		} else if (branches.includes(spot) && is_a_comment == false) {
 			type = 'branch';
 			end = position;
-			tokens.push({type, value:spot, start, end});
+			tokens.push({ type, value: spot, start, end });
 			prev = part;
-			spot ='';
-			start = position +1;
-		}prev = part;
-}return tokens;
-//Remember to handle underscores and the -> function correctly!!!!!
-///// MOLLY REMEMBER TO DOWNLOAD THE NPM STUFF LOOK AT VS CODE DOCUMENTATITON!!!!!
-    }
+			spot = '';
+			start = position + 1;
+		} prev = part;
+	
+	}console.log(tokens);
+	console.log(problems);
+	return  new TokenizedData(tokens, problems);
+	//Remember to handle underscores and the -> function correctly!!!!!
+	///// MOLLY REMEMBER TO DOWNLOAD THE NPM STUFF LOOK AT VS CODE DOCUMENTATITON!!!!!
+}
 
-export function indexOfNextWhitespace(data: string[], index: number): number{
-	let terms= 0;
+export function indexOfNextWhitespace(data: string[], index: number): number {
+	let terms = -1;
 	const letters = data.slice(index);
-	for(const letter of letters){
-		if(letter != " "){
+	for (const letter of letters) {
+		if (letter != " ") {
 			terms++;
 		}
-		else{
+		else {
 			break;
 		}
 	}
-	if(terms != 0){
+	if (terms != 0) {
 		return terms;
 	}
-	else{
+	else {
 		return 0;
 	}
-} 
+}
 
 //MOLLY YOU NEED TO ADD IN MAX ERRORS AND YOUR COUNT IS OFF BY 1! for the redlines
 
-async function addUnderlines(textDocument:TextDocument): Promise<Diagnostic[]> {
+async function addUnderlines(textDocument: TextDocument): Promise<Diagnostic[]> {
 	const settings = await getDocumentSettings(textDocument.uri);
 	const text = textDocument.getText();
-	const info: Diagnostic[]=[];
-	const brokenUp = text.trim().split('');
+	const info: Diagnostic[] = [];
+	//const brokenUp = text.trim().split('');
 	let problems = 0;
-	let past_check = 0;
-	while (problems < settings.maxNumberOfProblems){
-	problems++;
-	try{
-		const vals = tokenizeCoplandLine(text,past_check);
-	}
-	catch(error: unknown ){
-		if(error instanceof TokenError){
-			const problem: Diagnostic ={
-				severity: DiagnosticSeverity.Error,
-				range: {
-					start: textDocument.positionAt(error.data.error_start),
-					end: textDocument.positionAt(error.data.error_start +indexOfNextWhitespace(brokenUp,error.data.error_start))
-				},
-				message: error.data.error_reason,
-				source: 'ex'
-			};
-			past_check =indexOfNextWhitespace(brokenUp,error.data.error_start);
-			info.push(problem);
+	while (problems < settings.maxNumberOfProblems) {
+		//console.log(info);
+		problems++;
+		try {
+			console.log("Ran tokenizer");
+			const vals = tokenizeCoplandLine(text);
+			console.log(vals);
+		}
+		catch (error: unknown) {
+			if (error instanceof TokenError) {
+				const problem: Diagnostic = {
+					severity: DiagnosticSeverity.Error,
+					range: {
+						start: textDocument.positionAt(error.data.error_start),
+						end: textDocument.positionAt(error.data.error_start + error.data.error_end)
+					},
+					message: error.data.error_reason,
+					source: 'ex'
+				};
+				info.push(problem);
 			}
-		} return info;
-	}
+		} 
+	} return info;
 
 }
 
@@ -387,7 +415,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<Diagnos
 	const text = textDocument.getText();
 	const pattern = /\b[A-Z]{2,}\b/g;
 	let m: RegExpExecArray | null;
-//MOLLY THIS IS BROKEN FIX LATER FOR TESTING JSD:OGFJLDSKHJKFLSKDJF
+	//MOLLY THIS IS BROKEN FIX LATER FOR TESTING JSD:OGFJLDSKHJKFLSKDJF
 	let problems = 0;
 	const diagnostics: Diagnostic[] = [];
 	while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
@@ -410,7 +438,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<Diagnos
 					},
 					message: 'You can not start a place or symbol with an uppercase letter'
 				},
-				
+
 			];
 		}
 		diagnostics.push(diagnostic);
