@@ -260,7 +260,7 @@ export function tokenizeCoplandLine(line: string): TokenizedData {
 			} else if (spot == "_" && (part == ' ' || part == ']' || part == ')') == false) {
 				start = position - 1;
 				clean = indexOfNextWhitespace(parts, start);
-				problems.push(new TokenError("Syntax Error", { error_start: start, error_end: start + clean, error_reason: 'names can not start with an underscore, and copy can not be followed by anything other than a space or ) ]' }));
+				problems.push(new TokenError("Syntax Error", { error_start: start, error_end: start + clean, error_reason: 'Names can not start with an underscore, and copy can not be followed by anything other than a space or ) ]' }));
 				start += clean + 1;
 				//throwTokenError(start, 'names can not start with an underscore, and copy can not be followed by anything other than a space or ) ]');
 			} else if (/[a-z0-9_A-Z]+/.test(spot) && /[a-zA-Z_0-9]/.test(part)) {
@@ -274,7 +274,7 @@ export function tokenizeCoplandLine(line: string): TokenizedData {
 			} else if (spot == '{' && part != '}') {
 				start = position - 1;
 				clean = indexOfNextWhitespace(parts, start);
-				problems.push(new TokenError("Syntax Error", { error_start: start, error_end: start + clean, error_reason: "Null can not contain any terms, curly brackets are a key term in copland" }));
+				problems.push(new TokenError("Syntax Error", { error_start: start, error_end: start + clean, error_reason: "Null can not contain any terms, curly brackets are a key term" }));
 				start += clean + 2;
 				//throwTokenError(start, "Curly brackets can not contain anything in the language copland");
 			} else if (/\)|\]/.test(part)) {
