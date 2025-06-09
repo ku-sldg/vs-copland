@@ -34,7 +34,7 @@ const lexer = moo.compile({
   star:     '*',
 
   // Places and symbols
-  name: /\b[a-z0-9][a-zA-Z0-9_]*\b|\b\d+\b/,
+  identifier: /\b[a-z0-9][a-zA-Z0-9_]*\b|\b\d+\b/,
 
   // Catch everything else as unknown
   unknown:  { match: /./, error: true }
