@@ -1,2 +1,7 @@
-main -> (statement "\n"):+
-statement -> "foo" | "bar"
+@lexer lexer
+
+@{%
+
+const lexer = require("./copland-lexer.js")
+
+%}
