@@ -5,7 +5,7 @@ const lexer = moo.compile({
   comment:  { match: /\%.*$/, lineBreaks: false },
 
    // Invalid use of copy
-  invalid_identifier_copy: /_[^\s]+/,
+  invalid_copy: /_[^\s]+/,
 
   // Invalid identifier casing
   invalid_identifier_case: /\b[A-Z]+[a-zA-Z0-9_]*\b/,
