@@ -27,8 +27,6 @@ const lexer = moo.compile({
   ],
 
   // Grouping and punctuation
-  lbrace:   '{',
-  rbrace:   '}',
   lbrack:   '[',
   rbrack:   ']',
   lparen:   '(',
