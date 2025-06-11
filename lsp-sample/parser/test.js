@@ -5,7 +5,8 @@ const grammar = require("./grammar.js");
 const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
 
 // Parse something!
-parser.feed("*p0 p2 sys: 123 123 123");
+parser.feed("*p0, p2, sys: a123 123 a123");
 
 // parser.results is an array of possible parsings.
-console.log(JSON.stringify(parser.results));
+console.log(JSON.stringify(parser.results, null, 2));
+console.log("possible parses: ", parser.results.length);

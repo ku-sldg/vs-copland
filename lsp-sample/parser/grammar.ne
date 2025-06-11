@@ -9,10 +9,10 @@ const lexer = require("./copland-lexer.js")
 copland -> initial_place _ phrase
 			| phrase
 
-initial_place -> %star identifier_list %colon
+initial_place -> %star places %colon
 
-identifier_list -> %identifier _ (%comma _ %identifier _):*
-					| %identifier (_ %identifier):*
+places -> place _ (%comma _ place _):*
+					| place (_ place):*
 
 phrase -> symbol _ place _ symbol
 		| %null
@@ -21,8 +21,5 @@ phrase -> symbol _ place _ symbol
 symbol -> %identifier
 
 place -> symbol
-		| digits
-
-digits -> [0-9]:+
 
 _ -> %ws:*

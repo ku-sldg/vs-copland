@@ -40,7 +40,6 @@ const lexer = moo.compile({
   // Places and symbols
   identifier: /\b[a-z0-9][a-zA-Z0-9_]*\b|\b\d+\b/,
 
-
   // Catch everything else as unknown
   unknown:  { match: /./, error: true }
 });
