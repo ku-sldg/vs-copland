@@ -4,11 +4,14 @@ const lexer = moo.compile({
   ws:       { match: /[ \t\r\n]+/, lineBreaks: true },
   comment:  { match: /%.*$/, lineBreaks: false },
 
-   // Invalid use of copy
+  // Invalid use of copy
   invalid_copy: /_[^\s]+/,
 
   // Invalid identifier casing
   invalid_identifier_case: /\b[A-Z]+[a-zA-Z0-9_]*\b/,
+
+  // Invalid use of null
+  invalid_null: /\{[^}]+\}/,
 
   // Phrase operators
   null:     { match: '{}', value: () => '{}', type: 'null' },

@@ -1,6 +1,6 @@
 const lexer = require('./copland-lexer');
 
-const input = " _!123123ss _123 _1kimdfj _hey_hey _AAAA AAAaa A2323 aAaA {ASD} {a} +++++ @";
+const input = "*p0: @p1 _kim p2 ker -> ! -<- @p2 (vc p2 sys) -> !  _!123123ss _123 _1kimdfj _hey_hey _AAAA AAAaa A2323 aAaA { hi} {_he_llo} { } {   1e   }";
 
 lexer.reset(input);
 
