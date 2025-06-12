@@ -435,6 +435,21 @@ async function addUnderlines(textDocument: TextDocument): Promise<Diagnostic[]> 
 	} return info;
 }
 
+async function addErrorUnderlines(textDocument: TextDocument): Promise<Diagnostic[]>{
+	const text = textDocument.getText();
+	const info: Diagnostic[] = [];
+	lexer.reset(text);
+	const catagories = ["invalid_copy", "invalid_identifier_case","unknown"];
+	for(const token of lexer){
+		if(token.type != undefined){
+			if(catagories.includes(token.type)){
+				
+			}
+		}
+	}
+}
+
+
 
 
 // async function validateTextDocument(textDocument: TextDocument): Promise<Diagnostic[]> {
@@ -475,6 +490,9 @@ async function addUnderlines(textDocument: TextDocument): Promise<Diagnostic[]> 
 // 	}
 // 	return diagnostics;
 // }
+
+// connection.onDidSaveTextDocument()
+
 
 connection.onDidChangeWatchedFiles(_change => {
 	// Monitored files have change in VSCode
