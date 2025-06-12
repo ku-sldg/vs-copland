@@ -2,7 +2,7 @@ const moo = require("moo");
 
 const lexer = moo.compile({
   ws:       { match: /[ \t\r\n]+/, lineBreaks: true },
-  comment:  { match: /\%.*$/, lineBreaks: false },
+  comment:  { match: /%.*$/, lineBreaks: false },
 
    // Invalid use of copy
   invalid_copy: /_[^\s]+/,
@@ -36,6 +36,7 @@ const lexer = moo.compile({
 
   // Initial place
   star:     '*',
+  
 
   // Places and symbols
   identifier: /\b[a-z0-9][a-zA-Z0-9_]*\b|\b\d+\b/,
