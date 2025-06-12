@@ -26,11 +26,10 @@ import {
 import { parse, findErrors, toDiagnostic } from './parser';
 
 
-import lexer from "../parser/copland-lexer.js";
+import lexer from "./parser/copland-lexer.js";
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 const connection = createConnection(ProposedFeatures.all);
-
 // Create a simple text document manager.
 const documents = new TextDocuments(TextDocument);
 
@@ -399,7 +398,6 @@ async function addUnderlines(textDocument: TextDocument): Promise<Diagnostic[]> 
 	//const settings = await getDocumentSettings(textDocument.uri);
 	const text = textDocument.getText();
 	const info: Diagnostic[] = [];
-	console.log("Hello!");
 	lexer.reset(text);
 	for(const coin of lexer){
 		console.log(JSON.stringify(coin));
@@ -410,7 +408,6 @@ async function addUnderlines(textDocument: TextDocument): Promise<Diagnostic[]> 
 	//while (problems < settings.maxNumberOfProblems && array_of_issues.length > 0) {
 		//console.log(info);
 		for (const prob of array_of_issues) {
-			console.log("Hey Im here");
 			const problem: Diagnostic = {
 				severity: DiagnosticSeverity.Error,
 				range: {
