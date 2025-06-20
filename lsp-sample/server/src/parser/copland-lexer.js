@@ -1,7 +1,7 @@
 const moo = require("moo");
 
 const lexer = moo.compile({
-  ws:       { match: /[ \t\r\n]+/, lineBreaks: true },
+  ws:       { match: /[\s|\t|\r|\n]/, lineBreaks: true },
   comment:  { match: /%.*$/, lineBreaks: false },
 
   // Invalid use of copy
@@ -36,6 +36,9 @@ const lexer = moo.compile({
   rparen:   ')',
   colon:    ':',
   comma:    ',',
+  rcurly:   '{',
+  lcurly:   '}',
+
 
   // Initial place
   star:     '*',
