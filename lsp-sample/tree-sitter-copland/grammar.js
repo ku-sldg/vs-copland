@@ -13,14 +13,18 @@ module.exports = grammar({
   extras: $ => [/\s+/], // allow whitespace
 
   rules: {
-    source_file: $ => choice(
-      seq('*', $.place, ':', $.phrase),
+    copland: $ => choice(
+      seq('*', $.places, ':', $.phrase),
       $.phrase
     ),
 
-    place: $ => choice(
-      $.identifier,
-      $.digits
+    place: $ => seq(
+      $.symbol
+    ),
+
+    places: $ => seq(
+      $.place,
+      repeat(seq(optional(','), $.place))
     ),
 
     phrase: $ => $.at_expr,
@@ -48,21 +52,18 @@ module.exports = grammar({
 
     // Core atomic expressions
     prim_expr: $ => choice(
-      seq($.identifier, $.place, $.identifier), // measurement
+      seq($.symbol, $.place, $.symbol), // measurement
       '{}',
       '_',
       '!',
       '#',
-      $.identifier,
-      $.digits,
       seq('(', $.phrase, ')')
     ),
 
     branch_op: _ => choice('-<-', '+<-', '-<+', '+<+',
                            '-~-', '+~-', '-~+', '+~+'),
 
-    identifier: _ => /[a-zA-Z_][a-zA-Z0-9_]*/,
-    digits: _ => /\d+/
+    symbol: _ => /[a-zA-Z_][a-zA-Z0-9_]*/
   }
 });
 

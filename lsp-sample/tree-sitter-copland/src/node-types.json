@@ -70,11 +70,22 @@
       "required": true,
       "types": [
         {
-          "type": "digits",
+          "type": "symbol",
           "named": true
-        },
+        }
+      ]
+    }
+  },
+  {
+    "type": "places",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
         {
-          "type": "identifier",
+          "type": "place",
           "named": true
         }
       ]
@@ -89,19 +100,15 @@
       "required": false,
       "types": [
         {
-          "type": "digits",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
           "type": "phrase",
           "named": true
         },
         {
           "type": "place",
+          "named": true
+        },
+        {
+          "type": "symbol",
           "named": true
         }
       ]
@@ -140,7 +147,7 @@
           "named": true
         },
         {
-          "type": "place",
+          "type": "places",
           "named": true
         }
       ]
@@ -180,6 +187,10 @@
   },
   {
     "type": "+~-",
+    "named": false
+  },
+  {
+    "type": ",",
     "named": false
   },
   {
@@ -223,11 +234,7 @@
     "named": false
   },
   {
-    "type": "digits",
-    "named": true
-  },
-  {
-    "type": "identifier",
+    "type": "symbol",
     "named": true
   },
   {
