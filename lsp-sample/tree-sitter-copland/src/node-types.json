@@ -1,12 +1,237 @@
 [
   {
-    "type": "source_file",
+    "type": "at_expr",
     "named": true,
-    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "branch_expr",
+          "named": true
+        },
+        {
+          "type": "phrase",
+          "named": true
+        },
+        {
+          "type": "place",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "branch_expr",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "branch_op",
+          "named": true
+        },
+        {
+          "type": "seq_expr",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "branch_op",
+    "named": true,
     "fields": {}
   },
   {
-    "type": "hello",
+    "type": "phrase",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "at_expr",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "place",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "digits",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "prim_expr",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "digits",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "phrase",
+          "named": true
+        },
+        {
+          "type": "place",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "seq_expr",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "prim_expr",
+          "named": true
+        },
+        {
+          "type": "seq_expr",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "source_file",
+    "named": true,
+    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "phrase",
+          "named": true
+        },
+        {
+          "type": "place",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "!",
+    "named": false
+  },
+  {
+    "type": "#",
+    "named": false
+  },
+  {
+    "type": "(",
+    "named": false
+  },
+  {
+    "type": ")",
+    "named": false
+  },
+  {
+    "type": "*",
+    "named": false
+  },
+  {
+    "type": "+<+",
+    "named": false
+  },
+  {
+    "type": "+<-",
+    "named": false
+  },
+  {
+    "type": "+~+",
+    "named": false
+  },
+  {
+    "type": "+~-",
+    "named": false
+  },
+  {
+    "type": "-<+",
+    "named": false
+  },
+  {
+    "type": "-<-",
+    "named": false
+  },
+  {
+    "type": "->",
+    "named": false
+  },
+  {
+    "type": "-~+",
+    "named": false
+  },
+  {
+    "type": "-~-",
+    "named": false
+  },
+  {
+    "type": ":",
+    "named": false
+  },
+  {
+    "type": "@",
+    "named": false
+  },
+  {
+    "type": "[",
+    "named": false
+  },
+  {
+    "type": "]",
+    "named": false
+  },
+  {
+    "type": "_",
+    "named": false
+  },
+  {
+    "type": "digits",
+    "named": true
+  },
+  {
+    "type": "identifier",
+    "named": true
+  },
+  {
+    "type": "{}",
     "named": false
   }
 ]
