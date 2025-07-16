@@ -13,31 +13,30 @@
               "value": "*"
             },
             {
-              "type": "SYMBOL",
-              "name": "places"
+              "type": "FIELD",
+              "name": "initial_place",
+              "content": {
+                "type": "SYMBOL",
+                "name": "places"
+              }
             },
             {
               "type": "STRING",
               "value": ":"
             },
             {
-              "type": "SYMBOL",
-              "name": "phrase"
+              "type": "FIELD",
+              "name": "phrase",
+              "content": {
+                "type": "SYMBOL",
+                "name": "phrase"
+              }
             }
           ]
         },
         {
           "type": "SYMBOL",
           "name": "phrase"
-        }
-      ]
-    },
-    "place": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "symbol"
         }
       ]
     },
@@ -54,16 +53,8 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": ","
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
+                "type": "STRING",
+                "value": ","
               },
               {
                 "type": "SYMBOL",
@@ -74,59 +65,301 @@
         }
       ]
     },
-    "phrase": {
+    "place": {
       "type": "SYMBOL",
-      "name": "at_expr"
+      "name": "symbol"
     },
-    "at_expr": {
+    "phrase": {
       "type": "CHOICE",
       "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "at_expr"
+          },
+          "named": true,
+          "value": "at_expr"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "seq_expr"
+          },
+          "named": true,
+          "value": "seq_expr"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "branch_expr"
+          },
+          "named": true,
+          "value": "branch_expr"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "measurement"
+          },
+          "named": true,
+          "value": "measurement"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "null_expr"
+          },
+          "named": true,
+          "value": "null_expr"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "copy_expr"
+          },
+          "named": true,
+          "value": "copy_expr"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "sig_expr"
+          },
+          "named": true,
+          "value": "sig_expr"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "hash_expr"
+          },
+          "named": true,
+          "value": "hash_expr"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "symbol"
+        },
         {
           "type": "SEQ",
           "members": [
             {
               "type": "STRING",
-              "value": "@"
+              "value": "("
             },
             {
               "type": "SYMBOL",
-              "name": "place"
+              "name": "phrase"
             },
             {
               "type": "STRING",
-              "value": "["
-            },
-            {
-              "type": "SYMBOL",
-              "name": "term_expr"
-            },
-            {
-              "type": "STRING",
-              "value": "]"
+              "value": ")"
             }
           ]
         }
       ]
     },
-    "term_expr": {
+    "at_expr": {
       "type": "CHOICE",
       "members": [
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "symbol"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "place"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "symbol"
-            }
-          ]
+          "type": "PREC_LEFT",
+          "value": 1,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "@"
+              },
+              {
+                "type": "FIELD",
+                "name": "place",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "place"
+                }
+              },
+              {
+                "type": "STRING",
+                "value": "["
+              },
+              {
+                "type": "FIELD",
+                "name": "phrase",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "phrase"
+                }
+              },
+              {
+                "type": "STRING",
+                "value": "]"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "branch_expr": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PREC_LEFT",
+          "value": 2,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "branchLeft",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "phrase"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "op",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "branch_op"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "branchRight",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "phrase"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "seq_expr": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PREC_RIGHT",
+          "value": 3,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "seqLeft",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "phrase"
+                }
+              },
+              {
+                "type": "STRING",
+                "value": "->"
+              },
+              {
+                "type": "FIELD",
+                "name": "seqRight",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "phrase"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "measurement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "probe",
+          "content": {
+            "type": "SYMBOL",
+            "name": "symbol"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "place",
+          "content": {
+            "type": "SYMBOL",
+            "name": "place"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "target",
+          "content": {
+            "type": "SYMBOL",
+            "name": "symbol"
+          }
+        }
+      ]
+    },
+    "null_expr": {
+      "type": "STRING",
+      "value": "{}"
+    },
+    "copy_expr": {
+      "type": "STRING",
+      "value": "_"
+    },
+    "sig_expr": {
+      "type": "STRING",
+      "value": "!"
+    },
+    "hash_expr": {
+      "type": "STRING",
+      "value": "#"
+    },
+    "branch_op": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "-<-"
+        },
+        {
+          "type": "STRING",
+          "value": "+<-"
+        },
+        {
+          "type": "STRING",
+          "value": "-<+"
+        },
+        {
+          "type": "STRING",
+          "value": "+<+"
+        },
+        {
+          "type": "STRING",
+          "value": "-~-"
+        },
+        {
+          "type": "STRING",
+          "value": "+~-"
+        },
+        {
+          "type": "STRING",
+          "value": "-~+"
+        },
+        {
+          "type": "STRING",
+          "value": "+~+"
         }
       ]
     },

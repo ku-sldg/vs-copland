@@ -2,40 +2,141 @@
   {
     "type": "at_expr",
     "named": true,
-    "fields": {},
+    "fields": {
+      "phrase": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "phrase",
+            "named": true
+          }
+        ]
+      },
+      "place": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "place",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "branch_expr",
+    "named": true,
+    "fields": {
+      "branchLeft": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "phrase",
+            "named": true
+          }
+        ]
+      },
+      "branchRight": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "phrase",
+            "named": true
+          }
+        ]
+      },
+      "op": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "branch_op",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "branch_op",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "copland",
+    "named": true,
+    "root": true,
+    "fields": {
+      "initial_place": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "places",
+            "named": true
+          }
+        ]
+      },
+      "phrase": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "phrase",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
-      "multiple": true,
-      "required": true,
+      "multiple": false,
+      "required": false,
       "types": [
         {
-          "type": "place",
-          "named": true
-        },
-        {
-          "type": "term_expr",
+          "type": "phrase",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "copland",
+    "type": "measurement",
     "named": true,
-    "root": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "phrase",
-          "named": true
-        },
-        {
-          "type": "places",
-          "named": true
-        }
-      ]
+    "fields": {
+      "place": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "place",
+            "named": true
+          }
+        ]
+      },
+      "probe": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "symbol",
+            "named": true
+          }
+        ]
+      },
+      "target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "symbol",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -48,6 +149,42 @@
       "types": [
         {
           "type": "at_expr",
+          "named": true
+        },
+        {
+          "type": "branch_expr",
+          "named": true
+        },
+        {
+          "type": "copy_expr",
+          "named": true
+        },
+        {
+          "type": "hash_expr",
+          "named": true
+        },
+        {
+          "type": "measurement",
+          "named": true
+        },
+        {
+          "type": "null_expr",
+          "named": true
+        },
+        {
+          "type": "phrase",
+          "named": true
+        },
+        {
+          "type": "seq_expr",
+          "named": true
+        },
+        {
+          "type": "sig_expr",
+          "named": true
+        },
+        {
+          "type": "symbol",
           "named": true
         }
       ]
@@ -84,30 +221,81 @@
     }
   },
   {
-    "type": "term_expr",
+    "type": "seq_expr",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "place",
-          "named": true
-        },
-        {
-          "type": "symbol",
-          "named": true
-        }
-      ]
+    "fields": {
+      "seqLeft": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "phrase",
+            "named": true
+          }
+        ]
+      },
+      "seqRight": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "phrase",
+            "named": true
+          }
+        ]
+      }
     }
+  },
+  {
+    "type": "(",
+    "named": false
+  },
+  {
+    "type": ")",
+    "named": false
   },
   {
     "type": "*",
     "named": false
   },
   {
+    "type": "+<+",
+    "named": false
+  },
+  {
+    "type": "+<-",
+    "named": false
+  },
+  {
+    "type": "+~+",
+    "named": false
+  },
+  {
+    "type": "+~-",
+    "named": false
+  },
+  {
     "type": ",",
+    "named": false
+  },
+  {
+    "type": "-<+",
+    "named": false
+  },
+  {
+    "type": "-<-",
+    "named": false
+  },
+  {
+    "type": "->",
+    "named": false
+  },
+  {
+    "type": "-~+",
+    "named": false
+  },
+  {
+    "type": "-~-",
     "named": false
   },
   {
@@ -125,6 +313,22 @@
   {
     "type": "]",
     "named": false
+  },
+  {
+    "type": "copy_expr",
+    "named": true
+  },
+  {
+    "type": "hash_expr",
+    "named": true
+  },
+  {
+    "type": "null_expr",
+    "named": true
+  },
+  {
+    "type": "sig_expr",
+    "named": true
   },
   {
     "type": "symbol",

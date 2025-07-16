@@ -10,35 +10,77 @@
 module.exports = grammar({
   name: 'copland',
 
-  extras: $ => [/\s+/], // allow whitespace
+  extras: $ => [/\s+/],
 
   rules: {
     copland: $ => choice(
-      seq('*', $.places, ':', $.phrase),
+      seq(
+        '*',
+        field('initial_place', $.places),
+        ':',
+        field('phrase', $.phrase)
+      ),
       $.phrase
     ),
 
-    place: $ => seq(
-      $.symbol
+    places: $ => seq($.place, repeat(seq(',', $.place))),
+    place: $ => $.symbol,
+
+    phrase: $ => choice(
+      alias($. at_expr, $.at_expr),
+      alias($.seq_expr, $.seq_expr),
+      alias($.branch_expr, $.branch_expr),
+      alias($.measurement, $.measurement),
+      alias($.null_expr, $.null_expr),
+      alias($.copy_expr, $.copy_expr),
+      alias($.sig_expr, $.sig_expr),
+      alias($.hash_expr, $.hash_expr),
+      $.symbol,
+      seq('(', $.phrase, ')')
     ),
 
-    places: $ => seq(
-      $.place,
-      repeat(seq(optional(','), $.place))
-    ),
-
-    phrase: $ => $.at_expr,
-
-    // lowest prec
     at_expr: $ => choice(
-      seq('@', $.place, '[', $.term_expr, ']')
+      prec.left(1, seq(
+        '@',
+        field('place', $.place),
+        '[',
+        field('phrase', $.phrase),
+        ']'
+      ))
     ),
 
-    term_expr: $ => choice(
-      seq($.symbol, $.place, $.symbol)
+    branch_expr: $ => choice(
+      prec.left(2, seq(
+        field('branchLeft', $.phrase),
+        field('op', $.branch_op),
+        field('branchRight', $.phrase)
+      ))
+    ),
+
+    seq_expr: $ => choice(
+      prec.right(3, seq(
+        field('seqLeft', $.phrase),
+        '->',
+        field('seqRight', $.phrase)
+      ))
+    ),
+
+    measurement: $ => seq(
+      field('probe', $.symbol),
+      field('place', $.place),
+      field('target', $.symbol)
+    ),
+
+    null_expr: _ => '{}',
+    copy_expr: _ => '_',
+    sig_expr: _ => '!',
+    hash_expr: _ => '#',
+
+    branch_op: _ => choice(
+      '-<-', '+<-', '-<+', '+<+',
+      '-~-', '+~-', '-~+', '+~+'
     ),
 
     symbol: _ => /[a-zA-Z_][a-zA-Z0-9_]*/
   }
 });
-
