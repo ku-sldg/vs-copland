@@ -40,7 +40,7 @@ module.exports = grammar({
     ),
 
     at_expr: $ => choice(
-      prec.left(1, seq(
+      prec.right(1, seq(
         '@',
         field('place', $.place),
         '[',
@@ -84,3 +84,5 @@ module.exports = grammar({
     symbol: _ => /[a-zA-Z_][a-zA-Z0-9_]*/
   }
 });
+
+// fix precedence. at needs to wrap everything
