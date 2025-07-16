@@ -17,3 +17,5 @@ function printTree(node, indent = 0) {
 }
 
 printTree(root);
+
+// output is not recognizing initial exp and at exp

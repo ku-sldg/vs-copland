@@ -8,43 +8,35 @@
       "required": true,
       "types": [
         {
-          "type": "branch_expr",
-          "named": true
-        },
-        {
-          "type": "phrase",
-          "named": true
-        },
-        {
           "type": "place",
+          "named": true
+        },
+        {
+          "type": "term_expr",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "branch_expr",
+    "type": "copland",
     "named": true,
+    "root": true,
     "fields": {},
     "children": {
       "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "branch_op",
+          "type": "phrase",
           "named": true
         },
         {
-          "type": "seq_expr",
+          "type": "places",
           "named": true
         }
       ]
     }
-  },
-  {
-    "type": "branch_op",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "phrase",
@@ -92,17 +84,13 @@
     }
   },
   {
-    "type": "prim_expr",
+    "type": "term_expr",
     "named": true,
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
-        {
-          "type": "phrase",
-          "named": true
-        },
         {
           "type": "place",
           "named": true
@@ -115,102 +103,11 @@
     }
   },
   {
-    "type": "seq_expr",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "prim_expr",
-          "named": true
-        },
-        {
-          "type": "seq_expr",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "source_file",
-    "named": true,
-    "root": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "phrase",
-          "named": true
-        },
-        {
-          "type": "places",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "!",
-    "named": false
-  },
-  {
-    "type": "#",
-    "named": false
-  },
-  {
-    "type": "(",
-    "named": false
-  },
-  {
-    "type": ")",
-    "named": false
-  },
-  {
     "type": "*",
     "named": false
   },
   {
-    "type": "+<+",
-    "named": false
-  },
-  {
-    "type": "+<-",
-    "named": false
-  },
-  {
-    "type": "+~+",
-    "named": false
-  },
-  {
-    "type": "+~-",
-    "named": false
-  },
-  {
     "type": ",",
-    "named": false
-  },
-  {
-    "type": "-<+",
-    "named": false
-  },
-  {
-    "type": "-<-",
-    "named": false
-  },
-  {
-    "type": "->",
-    "named": false
-  },
-  {
-    "type": "-~+",
-    "named": false
-  },
-  {
-    "type": "-~-",
     "named": false
   },
   {
@@ -230,15 +127,7 @@
     "named": false
   },
   {
-    "type": "_",
-    "named": false
-  },
-  {
     "type": "symbol",
     "named": true
-  },
-  {
-    "type": "{}",
-    "named": false
   }
 ]
