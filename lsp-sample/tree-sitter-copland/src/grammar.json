@@ -2,6 +2,13 @@
   "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
   "name": "copland",
   "rules": {
+    "source_file": {
+      "type": "REPEAT",
+      "content": {
+        "type": "SYMBOL",
+        "name": "copland"
+      }
+    },
     "copland": {
       "type": "CHOICE",
       "members": [
@@ -145,8 +152,12 @@
           "value": "hash_expr"
         },
         {
-          "type": "SYMBOL",
-          "name": "symbol"
+          "type": "PREC",
+          "value": 1,
+          "content": {
+            "type": "SYMBOL",
+            "name": "symbol"
+          }
         },
         {
           "type": "SEQ",
@@ -282,33 +293,37 @@
       ]
     },
     "measurement": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "FIELD",
-          "name": "probe",
-          "content": {
-            "type": "SYMBOL",
-            "name": "symbol"
+      "type": "PREC",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "probe",
+            "content": {
+              "type": "SYMBOL",
+              "name": "symbol"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "place",
+            "content": {
+              "type": "SYMBOL",
+              "name": "place"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "target",
+            "content": {
+              "type": "SYMBOL",
+              "name": "symbol"
+            }
           }
-        },
-        {
-          "type": "FIELD",
-          "name": "place",
-          "content": {
-            "type": "SYMBOL",
-            "name": "place"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "target",
-          "content": {
-            "type": "SYMBOL",
-            "name": "symbol"
-          }
-        }
-      ]
+        ]
+      }
     },
     "null_expr": {
       "type": "STRING",

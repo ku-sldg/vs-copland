@@ -13,6 +13,8 @@ module.exports = grammar({
   extras: $ => [/\s+/],
 
   rules: {
+    source_file: $ => repeat($.copland),
+
     copland: $ => choice(
       seq(
         '*',
@@ -27,7 +29,7 @@ module.exports = grammar({
     place: $ => $.symbol,
 
     phrase: $ => choice(
-      alias($. at_expr, $.at_expr),
+      alias($.at_expr, $.at_expr),
       alias($.seq_expr, $.seq_expr),
       alias($.branch_expr, $.branch_expr),
       alias($.measurement, $.measurement),
@@ -35,7 +37,7 @@ module.exports = grammar({
       alias($.copy_expr, $.copy_expr),
       alias($.sig_expr, $.sig_expr),
       alias($.hash_expr, $.hash_expr),
-      $.symbol,
+      prec(1, $.symbol),
       seq('(', $.phrase, ')')
     ),
 
@@ -65,11 +67,11 @@ module.exports = grammar({
       ))
     ),
 
-    measurement: $ => seq(
+    measurement: $ => prec(2, seq(
       field('probe', $.symbol),
       field('place', $.place),
       field('target', $.symbol)
-    ),
+    )),
 
     null_expr: _ => '{}',
     copy_expr: _ => '_',
@@ -84,5 +86,3 @@ module.exports = grammar({
     symbol: _ => /[a-zA-Z_][a-zA-Z0-9_]*/
   }
 });
-
-// fix precedence. at needs to wrap everything
