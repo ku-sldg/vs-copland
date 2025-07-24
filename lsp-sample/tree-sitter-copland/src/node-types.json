@@ -75,7 +75,7 @@
         "required": false,
         "types": [
           {
-            "type": "places",
+            "type": "place",
             "named": true
           }
         ]
@@ -205,21 +205,6 @@
     }
   },
   {
-    "type": "places",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "place",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "seq_expr",
     "named": true,
     "fields": {
@@ -287,10 +272,6 @@
   },
   {
     "type": "+~-",
-    "named": false
-  },
-  {
-    "type": ",",
     "named": false
   },
   {

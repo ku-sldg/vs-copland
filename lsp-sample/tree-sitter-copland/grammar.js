@@ -18,14 +18,13 @@ module.exports = grammar({
     copland: $ => choice(
       seq(
         '*',
-        field('initial_place', $.places),
+        field('initial_place', $.place),
         ':',
         field('phrase', $.phrase)
       ),
       $.phrase
     ),
 
-    places: $ => seq($.place, repeat(seq(',', $.place))),
     place: $ => $.symbol,
 
     phrase: $ => choice(

@@ -24,7 +24,7 @@
               "name": "initial_place",
               "content": {
                 "type": "SYMBOL",
-                "name": "places"
+                "name": "place"
               }
             },
             {
@@ -44,31 +44,6 @@
         {
           "type": "SYMBOL",
           "name": "phrase"
-        }
-      ]
-    },
-    "places": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "place"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "STRING",
-                "value": ","
-              },
-              {
-                "type": "SYMBOL",
-                "name": "place"
-              }
-            ]
-          }
         }
       ]
     },
