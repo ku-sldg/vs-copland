@@ -13,7 +13,9 @@ module.exports = grammar({
   extras: $ => [/\s+/],
 
   rules: {
-    source_file: $ => repeat($.copland),
+    source_file: $ => repeat(choice($.copland, $.error_symbol)),
+
+    error_symbol: $ => prec(1, alias($._invalid_symbol, $.ERROR)),
 
     copland: $ => choice(
       seq(
@@ -24,6 +26,8 @@ module.exports = grammar({
       ),
       $.phrase
     ),
+
+    _invalid_symbol: _ => token(/_[a-zA-Z0-9_]+/),
 
     place: $ => $.symbol,
 
@@ -73,7 +77,7 @@ module.exports = grammar({
     )),
 
     null_expr: _ => '{}',
-    copy_expr: _ => '_',
+    copy_expr: _ => token.immediate('_'),
     sig_expr: _ => '!',
     hash_expr: _ => '#',
 

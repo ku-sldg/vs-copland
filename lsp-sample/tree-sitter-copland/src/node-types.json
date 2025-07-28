@@ -103,6 +103,21 @@
     }
   },
   {
+    "type": "error_symbol",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "ERROR",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "measurement",
     "named": true,
     "fields": {
@@ -242,6 +257,10 @@
         {
           "type": "copland",
           "named": true
+        },
+        {
+          "type": "error_symbol",
+          "named": true
         }
       ]
     }
@@ -301,6 +320,10 @@
   {
     "type": "@",
     "named": false
+  },
+  {
+    "type": "ERROR",
+    "named": true
   },
   {
     "type": "[",

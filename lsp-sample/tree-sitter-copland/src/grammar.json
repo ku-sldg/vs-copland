@@ -5,8 +5,30 @@
     "source_file": {
       "type": "REPEAT",
       "content": {
-        "type": "SYMBOL",
-        "name": "copland"
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "copland"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "error_symbol"
+          }
+        ]
+      }
+    },
+    "error_symbol": {
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "ALIAS",
+        "content": {
+          "type": "SYMBOL",
+          "name": "_invalid_symbol"
+        },
+        "named": true,
+        "value": "ERROR"
       }
     },
     "copland": {
@@ -46,6 +68,13 @@
           "name": "phrase"
         }
       ]
+    },
+    "_invalid_symbol": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "_[a-zA-Z0-9_]+"
+      }
     },
     "place": {
       "type": "SYMBOL",
@@ -305,8 +334,11 @@
       "value": "{}"
     },
     "copy_expr": {
-      "type": "STRING",
-      "value": "_"
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "_"
+      }
     },
     "sig_expr": {
       "type": "STRING",
