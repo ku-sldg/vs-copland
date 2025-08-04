@@ -1,0 +1,12 @@
+==================
+valid null: {}
+==================
+
+{}
+
+---
+
+(source_file
+  (copland
+    (phrase
+      (null_expr))))

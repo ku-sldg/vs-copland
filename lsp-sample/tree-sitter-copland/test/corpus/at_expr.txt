@@ -1,0 +1,20 @@
+==================
+valid at expr: @p1 [kim p2 ker]
+==================
+
+@p1 [kim p2 ker]
+
+---
+
+(source_file
+  (copland
+    (phrase
+      (at_expr
+        place: (place
+          (symbol))
+        phrase: (phrase
+          (measurement
+            probe: (symbol)
+            place: (place
+              (symbol))
+            target: (symbol)))))))
