@@ -23,6 +23,9 @@ import {
 	TextDocument
 } from 'vscode-languageserver-textdocument';
 
+import { parse, findErrors, toDiagnostic } from './parser';
+
+
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 const connection = createConnection(ProposedFeatures.all);
@@ -158,6 +161,18 @@ connection.languages.diagnostics.on(async (params) => {
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(change => {
 	addUnderlines(change.document);
+});
+
+connection.onRequest('copland/treeSitterDiagnostics', async ({ uri }) => {
+  const document = documents.get(uri);
+  if (!document) return;
+
+  const text = document.getText();
+  const tree = parse(text);
+  const errors = findErrors(tree.rootNode);
+  const diagnostics = errors.map(toDiagnostic);
+
+  connection.sendDiagnostics({ uri, diagnostics });
 });
 
 

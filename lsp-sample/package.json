@@ -17,7 +17,8 @@
 		"vscode": "^1.75.0"
 	},
 	"activationEvents": [
-		"onLanguage:copland"
+		"onLanguage:copland",
+		"onCommand:copland.runTreeSitterDiagnostics"
 	],
 	"main": "./client/out/extension",
 	"contributes": {
@@ -39,6 +40,12 @@
 				"language": "copland",
 				"scopeName": "source.cop",
 				"path": "./syntaxes/copland.tmLanguage.json"
+			}
+		],
+		"commands": [
+			{
+				"command": "copland.runTreeSitterDiagnostics",
+				"title": "Run Copland Syntax Check"
 			}
 		],
 		"configuration": {
