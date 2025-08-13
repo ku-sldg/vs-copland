@@ -4,11 +4,12 @@ import Copland = require('tree-sitter-copland');
 const parser = new Parser();
 parser.setLanguage(Copland);
 
-
+// Parse text using TreeSitter parser
 export function parse(text: string) {
   return parser.parse(text);
 }
 
+// Locate error nodes in parse tree
 export function findErrors(node: Parser.SyntaxNode, errors: Parser.SyntaxNode[] = []): Parser.SyntaxNode[] {
   if (node.type === "ERROR") {
     errors.push(node);
@@ -24,7 +25,7 @@ export function findErrors(node: Parser.SyntaxNode, errors: Parser.SyntaxNode[] 
   return errors;
 }
 
-
+// Convert error nodes to diagnostics
 export function toDiagnostic(errorNode: Parser.SyntaxNode): import('vscode-languageserver').Diagnostic {
   const start = errorNode.startPosition;
   const end = errorNode.endPosition;

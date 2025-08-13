@@ -163,6 +163,7 @@ documents.onDidChangeContent(change => {
 	addUnderlines(change.document);
 });
 
+// When Copland Syntax Check command is run, parse text, find any errors, convert errors to diagnostics, send diagnostics
 connection.onRequest('copland/treeSitterDiagnostics', async ({ uri }) => {
   const document = documents.get(uri);
   if (!document) return;

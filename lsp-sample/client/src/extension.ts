@@ -53,6 +53,7 @@ export function activate(context: ExtensionContext) {
 	// Start the client. This will also launch the server
 	client.start();
 
+	// Register command to run Copland syntax check with TreeSitter parser
 	context.subscriptions.push(
     vscode.commands.registerCommand('copland.runTreeSitterDiagnostics', async () => {
       const editor = vscode.window.activeTextEditor;
