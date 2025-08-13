@@ -1,0 +1,44 @@
+==================
+valid complex expr: *p0: @p1 [kim p2 ker -> ! -<- @p2 [(vc p2 sys) -> !]]
+==================
+
+*p0: @p1 [kim p2 ker -> ! -<- @p2 [(vc p2 sys) -> !]]
+
+---
+
+(source_file
+  (copland
+    initial_place: (place
+      (symbol))
+    phrase: (phrase
+      (at_expr
+        place: (place
+          (symbol))
+        phrase: (phrase
+          (branch_expr
+            branchLeft: (phrase
+              (seq_expr
+                seqLeft: (phrase
+                  (measurement
+                    probe: (symbol)
+                    place: (place
+                      (symbol))
+                    target: (symbol)))
+                seqRight: (phrase
+                  (sig_expr))))
+            op: (branch_op)
+            branchRight: (phrase
+              (at_expr
+                place: (place
+                  (symbol))
+                phrase: (phrase
+                  (seq_expr
+                    seqLeft: (phrase
+                      (phrase
+                        (measurement
+                          probe: (symbol)
+                          place: (place
+                            (symbol))
+                          target: (symbol))))
+                    seqRight: (phrase
+                      (sig_expr))))))))))))

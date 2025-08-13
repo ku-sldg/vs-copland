@@ -1,0 +1,175 @@
+==================
+valid branch expr: kim p2 ker -<- !
+==================
+
+kim p2 ker -<- !
+
+---
+
+(source_file
+  (copland
+    (phrase
+      (branch_expr
+        branchLeft: (phrase
+          (measurement
+            probe: (symbol)
+            place: (place
+              (symbol))
+            target: (symbol)))
+        op: (branch_op)
+        branchRight: (phrase
+          (sig_expr))))))
+
+==================
+valid branch expr: kim p2 ker +<- !
+==================
+
+kim p2 ker +<- !
+
+---
+
+(source_file
+  (copland
+    (phrase
+      (branch_expr
+        branchLeft: (phrase
+          (measurement
+            probe: (symbol)
+            place: (place
+              (symbol))
+            target: (symbol)))
+        op: (branch_op)
+        branchRight: (phrase
+          (sig_expr))))))
+
+==================
+valid branch expr: kim p2 ker -<+ !
+==================
+
+kim p2 ker -<+ !
+
+---
+
+(source_file
+  (copland
+    (phrase
+      (branch_expr
+        branchLeft: (phrase
+          (measurement
+            probe: (symbol)
+            place: (place
+              (symbol))
+            target: (symbol)))
+        op: (branch_op)
+        branchRight: (phrase
+          (sig_expr))))))
+
+==================
+valid branch expr: kim p2 ker +<+ !
+==================
+
+kim p2 ker +<+ !
+
+---
+
+(source_file
+  (copland
+    (phrase
+      (branch_expr
+        branchLeft: (phrase
+          (measurement
+            probe: (symbol)
+            place: (place
+              (symbol))
+            target: (symbol)))
+        op: (branch_op)
+        branchRight: (phrase
+          (sig_expr))))))
+
+==================
+valid branch expr: kim p2 ker -~- !
+==================
+
+kim p2 ker -~- !
+
+---
+
+(source_file
+  (copland
+    (phrase
+      (branch_expr
+        branchLeft: (phrase
+          (measurement
+            probe: (symbol)
+            place: (place
+              (symbol))
+            target: (symbol)))
+        op: (branch_op)
+        branchRight: (phrase
+          (sig_expr))))))
+
+==================
+valid branch expr: kim p2 ker +~- !
+==================
+
+kim p2 ker +~- !
+
+---
+
+(source_file
+  (copland
+    (phrase
+      (branch_expr
+        branchLeft: (phrase
+          (measurement
+            probe: (symbol)
+            place: (place
+              (symbol))
+            target: (symbol)))
+        op: (branch_op)
+        branchRight: (phrase
+          (sig_expr))))))
+
+==================
+valid branch expr: kim p2 ker -~+ !
+==================
+
+kim p2 ker -~+ !
+
+---
+
+(source_file
+  (copland
+    (phrase
+      (branch_expr
+        branchLeft: (phrase
+          (measurement
+            probe: (symbol)
+            place: (place
+              (symbol))
+            target: (symbol)))
+        op: (branch_op)
+        branchRight: (phrase
+          (sig_expr))))))
+
+==================
+valid branch expr: kim p2 ker +~+ !
+==================
+
+kim p2 ker +~+ !
+
+---
+
+(source_file
+  (copland
+    (phrase
+      (branch_expr
+        branchLeft: (phrase
+          (measurement
+            probe: (symbol)
+            place: (place
+              (symbol))
+            target: (symbol)))
+        op: (branch_op)
+        branchRight: (phrase
+          (sig_expr))))))

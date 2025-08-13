@@ -1,0 +1,38 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "copland",
+      "camelcase": "Copland",
+      "title": "Copland",
+      "scope": "source.copland",
+      "file-types": [
+        ".cop"
+      ],
+      "injection-regex": "^copland$",
+      "class-name": "TreeSitterCopland"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Copland grammar for tree-sitter",
+    "authors": [
+      {
+        "name": "Apk"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/tree-sitter/tree-sitter-copland"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true,
+    "zig": false
+  }
+}

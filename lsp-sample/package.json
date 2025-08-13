@@ -17,21 +17,37 @@
 		"vscode": "^1.75.0"
 	},
 	"activationEvents": [
-		"onLanguage:copland"
+		"onLanguage:copland",
+		"onCommand:copland.runTreeSitterDiagnostics"
 	],
 	"main": "./client/out/extension",
 	"contributes": {
-		"languages": [{
-			"id": "copland",
-			"aliases": ["Copland", "copland"],
-			"extensions": [".cop"],
-			"configuration": "./language-configuration.json"
-		}],
-		"grammars": [{
-      		"language": "copland",
-      		"scopeName": "source.cop",
-      		"path": "./syntaxes/copland.tmLanguage.json"
-    	}],
+		"languages": [
+			{
+				"id": "copland",
+				"aliases": [
+					"Copland",
+					"copland"
+				],
+				"extensions": [
+					".cop"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "copland",
+				"scopeName": "source.cop",
+				"path": "./syntaxes/copland.tmLanguage.json"
+			}
+		],
+		"commands": [
+			{
+				"command": "copland.runTreeSitterDiagnostics",
+				"title": "Run Copland Syntax Check"
+			}
+		],
 		"configuration": {
 			"type": "object",
 			"title": "Example configuration",
@@ -73,5 +89,9 @@
 		"mocha": "^10.3.0",
 		"typescript": "^5.8.2",
 		"typescript-eslint": "^8.26.0"
+	},
+	"dependencies": {
+		"tree-sitter": "^0.25.0",
+		"tree-sitter-cli": "^0.25.8"
 	}
 }
