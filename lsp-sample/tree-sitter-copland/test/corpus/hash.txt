@@ -1,0 +1,12 @@
+==================
+valid hash: #
+==================
+
+#
+
+---
+
+(source_file
+  (copland
+    (phrase
+      (hash_expr))))

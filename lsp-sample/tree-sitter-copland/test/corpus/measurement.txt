@@ -1,0 +1,16 @@
+==================
+valid meas: kim p2 ker
+==================
+
+kim p2 ker
+
+---
+
+(source_file
+  (copland
+    (phrase
+      (measurement
+        probe: (symbol)
+        place: (place
+          (symbol))
+        target: (symbol)))))

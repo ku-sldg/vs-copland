@@ -1,0 +1,25 @@
+==================
+valid copy: _
+==================
+_
+
+---
+
+(source_file
+  (copland
+    (phrase
+      (copy_expr))))
+
+==================
+copy w/ return (revisit): _
+:skip
+==================
+
+_
+
+---
+
+(source_file
+  (copland
+    (phrase
+      (copy_expr))))

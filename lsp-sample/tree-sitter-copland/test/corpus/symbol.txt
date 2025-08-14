@@ -1,0 +1,63 @@
+==================
+valid symbol: p1
+==================
+
+p1
+
+---
+
+(source_file
+  (copland
+    (phrase
+      (symbol))))
+
+==================
+valid symbol: p1_term
+==================
+
+p1_term
+
+---
+
+(source_file
+  (copland
+    (phrase
+      (symbol))))
+
+
+==================
+invalid symbol: _p1
+==================
+
+_p1
+
+---
+
+(source_file
+  (error_symbol
+    (ERROR)))
+
+==================
+invalid symbol: _p1_term
+==================
+
+_p1_term
+
+---
+
+(source_file
+  (error_symbol
+    (ERROR)))
+
+==================
+invalid symbol: P1
+:skip
+==================
+
+P1
+
+---
+
+(source_file
+  (ERROR
+    (ERROR)))

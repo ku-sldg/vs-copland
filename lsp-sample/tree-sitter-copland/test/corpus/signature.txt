@@ -1,0 +1,12 @@
+==================
+valid sig: !
+==================
+
+!
+
+---
+
+(source_file
+  (copland
+    (phrase
+      (sig_expr))))
