@@ -1,5 +1,5 @@
-import Parser = require('tree-sitter');
-import Copland = require('tree-sitter-copland');
+import Parser from 'tree-sitter';
+import Copland from '../../tree-sitter-copland';
 
 const parser = new Parser();
 parser.setLanguage(Copland);

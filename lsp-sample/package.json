@@ -77,7 +77,7 @@
 		"compile": "tsc -b",
 		"watch": "tsc -b -w",
 		"lint": "eslint",
-		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
+		"postinstall": "cd client && npm install && cd ../server && npm install && cd ../tree-sitter-copland && npm install && cd ..",
 		"test": "sh ./scripts/e2e.sh"
 	},
 	"devDependencies": {
@@ -89,9 +89,5 @@
 		"mocha": "^10.3.0",
 		"typescript": "^5.8.2",
 		"typescript-eslint": "^8.26.0"
-	},
-	"dependencies": {
-		"tree-sitter": "^0.25.0",
-		"tree-sitter-cli": "^0.25.8"
 	}
 }
