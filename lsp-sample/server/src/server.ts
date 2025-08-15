@@ -26,7 +26,7 @@ import {
 import { parse, findErrors, toDiagnostic } from './parser';
 
 
-import lexer from "./parser/copland-lexer.js";
+import lexer from "./lexer.js";
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 const connection = createConnection(ProposedFeatures.all);
@@ -396,49 +396,6 @@ export function indexOfNextWhitespace(data: string[], index: number): number {
 	else {
 		return 0;
 	}
-}
-
-//MOLLY YOU NEED TO ADD IN MAX ERRORS AND YOUR COUNT IS OFF BY 1! for the redlines
-
-async function addUnderlines(textDocument: TextDocument): Promise<Diagnostic[]> {
-	//const settings = await getDocumentSettings(textDocument.uri);
-	const text = textDocument.getText();
-	const info: Diagnostic[] = [];
-	lexer.reset(text);
-	for (const coin of lexer) {
-		console.log(JSON.stringify(coin));
-	}
-	//const brokenUp = text.trim().split('');
-	const vals = tokenizeCoplandLine(text);
-	const array_of_issues = vals.issues;
-	//while (problems < settings.maxNumberOfProblems && array_of_issues.length > 0) {
-	//console.log(info);
-	for (const prob of array_of_issues) {
-		const problem: Diagnostic = {
-			severity: DiagnosticSeverity.Error,
-			range: {
-				start: textDocument.positionAt(prob.data.error_start),
-				end: textDocument.positionAt(prob.data.error_end + 1)
-			},
-			message: prob.data.error_reason,
-			source: 'ex'
-
-		};
-		if (hasDiagnosticRelatedInformationCapability) {
-			problem.relatedInformation = [
-				{
-					location: {
-						uri: textDocument.uri,
-						range: Object.assign({}, problem.range)
-					},
-					message: "See copland syntax for more information."
-				}
-			];
-		}
-
-		info.push(problem);
-
-	} return info;
 }
 
 async function addErrorUnderlines(textDocument: TextDocument): Promise<Diagnostic[]> {

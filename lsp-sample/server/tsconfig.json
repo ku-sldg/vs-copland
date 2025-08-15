@@ -8,7 +8,8 @@
     "strict": true,
     "outDir": "out",
     "rootDir": "src",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "allowJs": true
   },
   "include": ["src", "../parser"],
   "exclude": ["node_modules", ".vscode-test"]
