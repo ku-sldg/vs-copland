@@ -1,6 +1,6 @@
-const moo = require("moo");
+import moo from "moo";
 
-const lexer = moo.compile({
+export const Lexer = moo.compile({
   ws:       { match: /[\s|\t|\r|\n]/, lineBreaks: true },
   comment:  { match: /%.*$/, lineBreaks: false },
 
@@ -14,7 +14,7 @@ const lexer = moo.compile({
   invalid_null: /\{[^}]+\}/,
 
   // Phrase operators
-  null:     { match: '{}', value: () => '{}', type: 'null' },
+  null:     '{}',
   arrow:    '->',
   sig:      '!',
   hash:     '#',
@@ -51,4 +51,3 @@ const lexer = moo.compile({
   unknown:  { match: /./, error: true }
 });
 
-module.exports = lexer;

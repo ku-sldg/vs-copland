@@ -26,7 +26,7 @@ import {
 import { parse, findErrors, toDiagnostic } from './parser';
 
 
-import lexer from "./lexer.js";
+import { Lexer } from "./lexer";
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 const connection = createConnection(ProposedFeatures.all);
@@ -401,10 +401,10 @@ export function indexOfNextWhitespace(data: string[], index: number): number {
 async function addErrorUnderlines(textDocument: TextDocument): Promise<Diagnostic[]> {
 	const text = textDocument.getText();
 	const info: Diagnostic[] = [];
-	lexer.reset(text);
+	Lexer.reset(text);
 	let message = '';
 	const catagories = ["invalid_copy", "invalid_identifier_case", "unknown", "invalid_null", "rcurly", "lcurly"];
-	for (const token of lexer) {
+	for (const token of Lexer) {
 		if (token.type != undefined) {
 			if (catagories.includes(token.type)) {
 				switch (token.type) {
