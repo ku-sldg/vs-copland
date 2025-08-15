@@ -18,7 +18,7 @@
 			"include": "#phrase_measurement"
 		},
 		{
-			"include": "#inital_place"
+			"include": "#initial_place"
 		},
 		{
 			"include": "#place"
@@ -84,19 +84,19 @@
 				}
 			]
 		},
-		"inital_place": {
+		"initial_place": {
 			"patterns": [],
 			"begin": "(\\*)([a-z0-9][a-zA-Z0-9_]*)?,?\\s?([a-z0-9][a-zA-Z0-9]*)?",
 			"end": "\\s?:",
 			"captures": {
 				"1": {
-					"name": "entity.name.type.initalplace.copland"
+					"name": "entity.name.type.initialplace.copland"
 				},
 				"2": {
-					"name": "entity.name.type.initalplace.copland"
+					"name": "entity.name.type.initialplace.copland"
 				},
 				"3": {
-					"name": "entity.name.type.initalplace.copland"
+					"name": "entity.name.type.initialplace.copland"
 				}
 			}
 		},
@@ -113,7 +113,7 @@
 			"end": "(?=\\s|\\)|\\]|$)",
 			"patterns": [
 				{
-					"include": "#phrase-measurement"
+					"include": "#phrase_measurement"
 				}
 			]
 		},

@@ -403,10 +403,10 @@ async function addErrorUnderlines(textDocument: TextDocument): Promise<Diagnosti
 	const info: Diagnostic[] = [];
 	Lexer.reset(text);
 	let message = '';
-	const catagories = ["invalid_copy", "invalid_identifier_case", "unknown", "invalid_null", "rcurly", "lcurly"];
+	const categories = ["invalid_copy", "invalid_identifier_case", "unknown", "invalid_null", "rcurly", "lcurly"];
 	for (const token of Lexer) {
 		if (token.type != undefined) {
-			if (catagories.includes(token.type)) {
+			if (categories.includes(token.type)) {
 				switch (token.type) {
 					case "invalid_copy": {
 						message = "Names can not start with an underscore, and copy can not be followed by anything other than a space or ) ].";
