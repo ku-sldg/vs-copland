@@ -1,9 +1,0 @@
-Places: Most of the other defs need places to be defined, need to correctly mark these in code
-
-Phrase: needs a place to be defined and also is an important component for a copland
-
-Symbol: self explanatory marking these correctly is important
-
-Branch: explanatory as well big enough separate category
-
-Evidence: Needs to be defined in my mind to separate it 

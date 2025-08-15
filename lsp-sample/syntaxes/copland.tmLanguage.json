@@ -1,102 +1,143 @@
 {
-	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-	"name": "Copland",
-	"patterns": [
-		{ "include": "#cop_comment"},
-		{ "include": "#phrase_operators" },
-		{ "include": "#branch"},
-		{ "include": "#at_phrase"},
-		{ "include": "#phrase-measurement"},
-		{ "include": "#inital_place"},
-		{ "include": "#place"},
-		{ "include": "#symbol"}
-	],
-	"repository": {
-		"phrase-measurement": {
-			"begin": "\\b([a-z][a-zA-Z0-9_]*)\\b\\s+(\\b(?:[a-z][a-zA-Z0-9_]*|\\d+)\\b)\\s+(\\b[a-z][a-zA-Z0-9_]*\\b)",
-			"end": "(?=\\s|\\)|\\]|$)",
-			"patterns": [],
-			"captures": {
-				"1": {"name": "entity.name.function.symbol.source.copland" },
-				"2": {"name": "variable.parameter.place.copland"},
-				"3": {"name": "entity.name.function.symbol.target.copland"}
-			}
-
-		},
-		"symbol": {
-			"patterns": [
-				{
-					"name": "entity.name.function.symbol.copland",
-					"match": "\\b[a-z][a-zA-Z0-9_]*\\b"
-				}
-			]
-		},
-		"place": {
-			"patterns": [
-				{
-					"name": "variable.parameter.place.copland",
-					"match": "\\b[a-z0-9][a-zA-Z0-9_]*\\b|\\b\\d+\\b"
-				}
-			]
-		},
-		"phrase_operators": {
-			"patterns": [
-				{
-					"name": "keyword.phrase_operator.null.copland",
-					"match": "{}"
-				},
-				{
-					"name": "keyword.phrase_operator.linear.copland",
-					"match": "->"
-				},
-				{
-					"name":"keyword.phrase_operator.signature.copland",
-					"match": "!"
-				},
-				{
-					"name":"keyword.phrase_operator.hash.copland",
-					"match": "#"
-				},
-				{
-					"name":"keyword.phrase_operator.copy.copland",
-					"match": "_"
-				}
-			]
-		},
-		"inital_place":{
-			"patterns": [],
-			"begin": "(\\*)([a-z0-9][a-zA-Z0-9_]*)?,?\\s?([a-z0-9][a-zA-Z0-9]*)?",
-			"end": "\\s?:",
-			"captures": {
-				"1": { "name": "entity.name.type.initalplace.copland" },
-				"2": { "name": "entity.name.type.initalplace.copland"},
-				"3": { "name": "entity.name.type.initalplace.copland"}
-			}
-
-		},
-		"at_phrase":{
-			"begin": "(@)\\s?(\\b[a-z0-9][a-zA-Z0-9_]*|\\d+\\b)",
-			"beginCaptures": {
-				"1": { "name": "keyword.phrase_operator.at.copland"},
-				"2": { "name": "variable.parameter.place.copland"}},
-			"end": "(?=\\s|\\)|\\]|$)",
-			"patterns": [{"include": "#phrase-measurement"}]
-		},
-		"branch":{
-			"patterns": [{
-					"name": "keyword.operator.branch.sequential.copland",
-					"match": "-<-|\\+<-|-<\\+|\\+<\\+"
-				},
-				{
-					"name": "keyword.operator.branch.parallel.copland",
-					"match": "-~-|\\+~-|-~\\+|\\+~\\+"
-				}]
-		},
-		"cop_comment":{
-			"begin": "(\\%.*)",
-			"end": "$",
-			"captures": {"1": { "name":"comment.line.percentage.copland"}}
-		}
-	},
-	"scopeName": "source.cop"
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Copland",
+  "patterns": [
+    {
+      "include": "#cop_comment"
+    },
+    {
+      "include": "#phrase_operators"
+    },
+    {
+      "include": "#branch"
+    },
+    {
+      "include": "#at_phrase"
+    },
+    {
+      "include": "#phrase_measurement"
+    },
+    {
+      "include": "#inital_place"
+    },
+    {
+      "include": "#place"
+    },
+    {
+      "include": "#symbol"
+    }
+  ],
+  "repository": {
+    "phrase_measurement": {
+      "begin": "\\b([a-z][a-zA-Z0-9_]*)\\b\\s+(\\b(?:[a-z][a-zA-Z0-9_]*|\\d+)\\b)\\s+(\\b[a-z][a-zA-Z0-9_]*\\b)",
+      "end": "(?=\\s|\\)|\\]|$)",
+      "patterns": [],
+      "captures": {
+        "1": {
+          "name": "entity.name.function.symbol.source.copland"
+        },
+        "2": {
+          "name": "variable.parameter.place.copland"
+        },
+        "3": {
+          "name": "entity.name.function.symbol.target.copland"
+        }
+      }
+    },
+    "symbol": {
+      "patterns": [
+        {
+          "name": "entity.name.function.symbol.copland",
+          "match": "\\b[a-z][a-zA-Z0-9_]*\\b"
+        }
+      ]
+    },
+    "place": {
+      "patterns": [
+        {
+          "name": "variable.parameter.place.copland",
+          "match": "\\b[a-z0-9][a-zA-Z0-9_]*\\b|\\b\\d+\\b"
+        }
+      ]
+    },
+    "phrase_operators": {
+      "patterns": [
+        {
+          "name": "keyword.phrase_operator.null.copland",
+          "match": "{}"
+        },
+        {
+          "name": "keyword.phrase_operator.linear.copland",
+          "match": "->"
+        },
+        {
+          "name": "keyword.phrase_operator.signature.copland",
+          "match": "!"
+        },
+        {
+          "name": "keyword.phrase_operator.hash.copland",
+          "match": "#"
+        },
+        {
+          "name": "keyword.phrase_operator.copy.copland",
+          "match": "_"
+        }
+      ]
+    },
+    "inital_place": {
+      "patterns": [],
+      "begin": "(\\*)([a-z0-9][a-zA-Z0-9_]*)?,?\\s?([a-z0-9][a-zA-Z0-9]*)?",
+      "end": "\\s?:",
+      "captures": {
+        "1": {
+          "name": "entity.name.type.initalplace.copland"
+        },
+        "2": {
+          "name": "entity.name.type.initalplace.copland"
+        },
+        "3": {
+          "name": "entity.name.type.initalplace.copland"
+        }
+      }
+    },
+    "at_phrase": {
+      "begin": "(@)\\s?(\\b[a-z0-9][a-zA-Z0-9_]*|\\d+\\b)",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.phrase_operator.at.copland"
+        },
+        "2": {
+          "name": "variable.parameter.place.copland"
+        }
+      },
+      "end": "(?=\\s|\\)|\\]|$)",
+      "patterns": [
+        {
+          "include": "#phrase-measurement"
+        }
+      ]
+    },
+    "branch": {
+      "patterns": [
+        {
+          "name": "keyword.operator.branch.sequential.copland",
+          "match": "-<-|\\+<-|-<\\+|\\+<\\+"
+        },
+        {
+          "name": "keyword.operator.branch.parallel.copland",
+          "match": "-~-|\\+~-|-~\\+|\\+~\\+"
+        }
+      ]
+    },
+    "cop_comment": {
+      "begin": "(\\%.*)",
+      "end": "$",
+      "captures": {
+        "1": {
+          "name": "comment.line.percentage.copland"
+        }
+      }
+    }
+  },
+  "scopeName": "source.cop"
 }
