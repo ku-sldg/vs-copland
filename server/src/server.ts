@@ -26,10 +26,10 @@ import {
 import { parse, findErrors, toDiagnostic } from './parser';
 
 
+import { Lexer } from "./lexer";
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 const connection = createConnection(ProposedFeatures.all);
-
 // Create a simple text document manager.
 const documents = new TextDocuments(TextDocument);
 
@@ -115,7 +115,7 @@ connection.onDidChangeConfiguration(change => {
 	// Refresh the diagnostics since the `maxNumberOfProblems` could have changed.
 	// We could optimize things here and re-fetch the setting first can compare it
 	// to the existing setting, but this is out of scope for this example.
-	connection.languages.diagnostics.refresh();
+	//connection.languages.diagnostics.refresh();
 });
 
 function getDocumentSettings(resource: string): Thenable<ExampleSettings> {
@@ -144,7 +144,7 @@ connection.languages.diagnostics.on(async (params) => {
 	if (document !== undefined) {
 		return {
 			kind: DocumentDiagnosticReportKind.Full,
-			items: await addUnderlines(document)
+			items: await addErrorUnderlines(document)
 			//MOLLY THIS USED TO BE validateTextDocument
 		} satisfies DocumentDiagnosticReport;
 	} else {
@@ -159,14 +159,20 @@ connection.languages.diagnostics.on(async (params) => {
 
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
-documents.onDidChangeContent(change => {
-	addUnderlines(change.document);
-});
+
+// documents.onDidChangeContent(change => {
+// 	console.log("HEY Method Called!!!");
+// 	addErrorUnderlines(change.document);
+// }
+// );
+
+
+
 
 // When Copland Syntax Check command is run, parse text, find any errors, convert errors to diagnostics, send diagnostics
 connection.onRequest('copland/treeSitterDiagnostics', async ({ uri }) => {
   const document = documents.get(uri);
-  if (!document) return;
+  if (!document) {return;}
 
   const text = document.getText();
   const tree = parse(text);
@@ -365,7 +371,7 @@ export function tokenizeCoplandLine(line: string): TokenizedData {
 			start = position + 1;
 		} prev = part;
 
-	} 
+	}
 	//console.log(tokens);
 	//console.log(problems);
 	return new TokenizedData(tokens, problems);
@@ -392,44 +398,69 @@ export function indexOfNextWhitespace(data: string[], index: number): number {
 	}
 }
 
-//MOLLY YOU NEED TO ADD IN MAX ERRORS AND YOUR COUNT IS OFF BY 1! for the redlines
-
-async function addUnderlines(textDocument: TextDocument): Promise<Diagnostic[]> {
-	//const settings = await getDocumentSettings(textDocument.uri);
+async function addErrorUnderlines(textDocument: TextDocument): Promise<Diagnostic[]> {
 	const text = textDocument.getText();
 	const info: Diagnostic[] = [];
-	//const brokenUp = text.trim().split('');
-	const vals = tokenizeCoplandLine(text);
-	const array_of_issues = vals.issues;
-	//while (problems < settings.maxNumberOfProblems && array_of_issues.length > 0) {
-		//console.log(info);
-		for (const prob of array_of_issues) {
-			const problem: Diagnostic = {
-				severity: DiagnosticSeverity.Error,
-				range: {
-					start: textDocument.positionAt(prob.data.error_start),
-					end: textDocument.positionAt(prob.data.error_end+1)
-				},
-				message: prob.data.error_reason,
-				source: 'ex'
-
-			};
-			if(hasDiagnosticRelatedInformationCapability){
-				problem.relatedInformation=[
-					{
-						location:{
-							uri: textDocument.uri,
-							range: Object.assign({},problem.range)
-						},
-						message: "See copland syntax for more information."
+	Lexer.reset(text);
+	let message = '';
+	const categories = ["invalid_copy", "invalid_identifier_case", "unknown", "invalid_null", "rcurly", "lcurly"];
+	for (const token of Lexer) {
+		if (token.type != undefined) {
+			if (categories.includes(token.type)) {
+				switch (token.type) {
+					case "invalid_copy": {
+						message = "Names can not start with an underscore, and copy can not be followed by anything other than a space or ) ].";
+						break;
 					}
-				];
+					case "invalid_identifier_case": {
+						message = "Names can not start with a capital letter.";
+						break;
+					}
+					case "unknown": {
+						message = "These are unknown terms.";
+						break;
+					}
+					case "invalid_null": {
+						message = "Null can not contain any terms, curly brackets are a key term.";
+						break;
+					}
+					case "rcurly": {
+						message = "Curly brackets can not be used for grouping/Invalid use of null.";
+						break;
+					}
+					case "lcurly":{
+						message = "Curly brackets can not be used for grouping/Invalid use of null.";
+						break;
+					}
+				}
+				const problem: Diagnostic = {
+					severity: DiagnosticSeverity.Error,
+					range: {
+						start: textDocument.positionAt(token.offset),
+						end: textDocument.positionAt(token.offset+token.text.length)
+					},
+					message: message,
+					source: 'ex'
+
+				};
+				if (hasDiagnosticRelatedInformationCapability) {
+					problem.relatedInformation = [
+						{
+							location: {
+								uri: textDocument.uri,
+								range: Object.assign({}, problem.range)
+							},
+							message: "See copland syntax for more information."
+						}
+					];
+				}
+				info.push(problem);
 			}
-
-			info.push(problem);
-
-	} return info;
+		}
+	}
+	return info;
 }
+
 
 
 
@@ -471,6 +502,9 @@ async function addUnderlines(textDocument: TextDocument): Promise<Diagnostic[]> 
 // 	}
 // 	return diagnostics;
 // }
+
+// connection.onDidSaveTextDocument()
+
 
 connection.onDidChangeWatchedFiles(_change => {
 	// Monitored files have change in VSCode
