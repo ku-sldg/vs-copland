@@ -35,7 +35,6 @@ export const Lexer = moo.compile({
   lparen:   '(',
   rparen:   ')',
   colon:    ':',
-  comma:    ',',
   rcurly:   '{',
   lcurly:   '}',
 
