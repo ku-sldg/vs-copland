@@ -86,16 +86,13 @@
 		},
 		"initial_place": {
 			"patterns": [],
-			"begin": "(\\*)([a-z0-9][a-zA-Z0-9_]*)?,?\\s?([a-z0-9][a-zA-Z0-9]*)?",
+			"begin": "(\\*)([a-z0-9][a-zA-Z0-9_]*)",
 			"end": "\\s?:",
 			"captures": {
 				"1": {
 					"name": "entity.name.type.initialplace.copland"
 				},
 				"2": {
-					"name": "entity.name.type.initialplace.copland"
-				},
-				"3": {
 					"name": "entity.name.type.initialplace.copland"
 				}
 			}
