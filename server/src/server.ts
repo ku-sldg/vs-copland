@@ -160,13 +160,20 @@ connection.languages.diagnostics.on(async (params) => {
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 
-// documents.onDidChangeContent(change => {
-// 	console.log("HEY Method Called!!!");
-// 	addErrorUnderlines(change.document);
-// }
-// );
+async function validateTextDocument(textDocument: TextDocument) {
+	const text = textDocument.getText();
+	const tree = parse(text);
+	const errors = findErrors(tree.rootNode);
+  	const diagnostics = errors.map(toDiagnostic);
+
+  connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+}
 
 
+documents.onDidChangeContent(change => {
+	validateTextDocument(change.document)
+}
+);
 
 
 // When Copland Syntax Check command is run, parse text, find any errors, convert errors to diagnostics, send diagnostics
