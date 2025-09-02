@@ -16,7 +16,8 @@ import {
 	TextDocumentSyncKind,
 	InitializeResult,
 	DocumentDiagnosticReportKind,
-	type DocumentDiagnosticReport
+	type DocumentDiagnosticReport,
+	Range
 } from 'vscode-languageserver/node';
 
 import {
@@ -166,244 +167,16 @@ connection.languages.diagnostics.on(async (params) => {
 // }
 // );
 
-
-
-
-// When Copland Syntax Check command is run, parse text, find any errors, convert errors to diagnostics, send diagnostics
-connection.onRequest('copland/treeSitterDiagnostics', async ({ uri }) => {
-  const document = documents.get(uri);
-  if (!document) {return;}
-
-  const text = document.getText();
-  const tree = parse(text);
-  const errors = findErrors(tree.rootNode);
-  const diagnostics = errors.map(toDiagnostic);
-
-  connection.sendDiagnostics({ uri, diagnostics });
-});
-
-
-interface CoplandToken {
-	type: "phrase_operators" | 'branch' | 'initial_place' | 'name' | 'grouping' | 'unknown';
-	value: string;
-	start: number;
-	end: number;
-}
-
-interface badToken {
-	error_start: number;
-	error_end: number;
-	error_reason: string;
-}
-
-class TokenError extends Error {
-	public data: badToken;
-
-	constructor(message: string, data: badToken) {
-		super(message);
-		this.name = "TokenError";
-		Object.setPrototypeOf(this, TokenError.prototype);
-		this.data = data;
-	}
-}
-
-
-/*
-// Unused function: throwTokenError
-function throwTokenError(position: number, message: string): void {
-	throw new Error(`Token error at position ${position}: ${message}`);
-}
-*/
-class TokenizedData {
-	public tokens: CoplandToken[];
-	public issues: TokenError[];
-	constructor(tokens: CoplandToken[], issues: TokenError[]) {
-		this.tokens = tokens;
-		this.issues = issues;
-	}
-}
-
-export function tokenizeCoplandLine(line: string): TokenizedData {
-	const tokens: CoplandToken[] = [];
-	let position = -1;
-	const parts = line.trim().split('');
-	//console.log(parts);
-	let spot = '';
-	let prev = '';
-	let start = 0;
-	let end = 0;
-	let is_a_comment = false;
-	const problems: TokenError[] = [];
-	let clean = 0;
-	const branches = ['-<-', '+<-', '-<+', '+<+', '-~-', '+~-', '-~+', '+~+'];
-	//console.log(parts);
-	//think abt comments %????
-	//ADD IN COUNTING TOMORROW!!!!!! dont forget to account for spaces
-	for (const part of parts) {
-		//maybe break if the first part is a % bc its a comment
-		let newToken = false;
-		let type: CoplandToken['type'] = 'unknown';
-		position++;
-		if (clean != 0) {
-			clean--;
-			spot = '';
-			continue;
-		}
-		if (part == "%") {
-			is_a_comment = true;
-		}
-		if (spot == '') {
-			newToken = true; //a new token is either the start of a file or the first expression after a space
-		}
-		if (newToken) {
-			if (/\s|\n|\t/.test(part)) {
-				start++;
-			} else if (part == "_" && (prev == ' ' || prev == '(' || prev == '[')) {
-				spot += part;
-			} else if (/[A-Z]/.test(part) == false && /[a-z0-9]/.test(part) && prev != '_') {
-				spot += part;
-
-			} else if (/[A-Z]/.test(part)) {
-				start = position;
-				clean = indexOfNextWhitespace(parts, start);
-				problems.push(new TokenError("Syntax Error", { error_start: start, error_end: start + clean, error_reason: 'Names can not start with a capital letter' }));
-				start += clean + 1;
-				//throwTokenError(start, 'Names can not start with a capital letter');
-
-				//Append error obj to errors list 
-			} else if (/\*|@|!|#|-|\+|{|\(|\[|\)|\]|%/.test(part)) {
-				spot += part;
-			}
-		}
-		else {
-			//Molly remember to check that part was a space when assigning a type if it passes through the if statments
-			if (spot.includes('%')) {
-				spot += part;
-			} else if (spot == "_" && (part == ' ' || part == ']' || part == ')') == false) {
-				start = position - 1;
-				clean = indexOfNextWhitespace(parts, start);
-				problems.push(new TokenError("Syntax Error", { error_start: start, error_end: start + clean, error_reason: 'Names can not start with an underscore, and copy can not be followed by anything other than a space or ) ]' }));
-				start += clean + 1;
-				//throwTokenError(start, 'names can not start with an underscore, and copy can not be followed by anything other than a space or ) ]');
-			} else if (/[a-z0-9_A-Z]+/.test(spot) && /[a-zA-Z_0-9]/.test(part)) {
-				spot += part;
-			} else if (part == '>' && spot == '-') {
-				spot += part;
-			} else if (/<|-|\+|~/.test(part) && /-|<|~|\+/.test(spot)) {
-				spot += part;
-			} else if (spot == '{' && part == "}") {
-				spot += part;
-			} else if (spot == '{' && part != '}') {
-				start = position - 1;
-				clean = indexOfNextWhitespace(parts, start);
-				problems.push(new TokenError("Syntax Error", { error_start: start, error_end: start + clean, error_reason: "Null can not contain any terms, curly brackets are a key term" }));
-				start += clean + 2;
-				//throwTokenError(start, "Curly brackets can not contain anything in the language copland");
-			} else if (/\)|\]/.test(part)) {
-				if (spot == "_") {
-					type = 'phrase_operators';
-					end = position - 1;
-					tokens.push({ type, value: spot, start, end });
-					spot = part;
-					start = position;
-				} else if (/[a-zA-Z0-9_]+/.test(spot)) {
-					type = 'name';
-					end = position - 1;
-					tokens.push({ type, value: spot, start, end });
-					spot = part;
-					start = position;
-				}
-				//aditional checks here maybe???
-			}
-		}
-		if (spot.includes("%") && part == '\n' && is_a_comment == true) {
-			start = position + 1;
-			spot = '';
-			is_a_comment = false;
-		} else if (/\*/.test(spot) && is_a_comment == false) {
-			type = 'initial_place';
-			end = position;
-			tokens.push({ type, value: spot, start, end });
-			prev = part;
-			spot = "";
-			start = end + 1;
-		} else if ((/@|!|#/.test(spot) || spot == '{}' || spot == '->') && is_a_comment == false) {
-			type = 'phrase_operators';
-			end = position;
-			tokens.push({ type, value: spot, start, end });
-			prev = part;
-			spot = '';
-			start = end + 1;
-		} else if (/\(|\[|\)|\]/.test(spot) && is_a_comment == false) {
-			type = 'grouping';
-			end = position;
-			tokens.push({ type, value: spot, start, end });
-			prev = part;
-			spot = '';
-			start = end + 1;
-		} else if (spot == "_" && part == " " && is_a_comment == false) {
-			type = 'phrase_operators';
-			end = position - 1;
-			tokens.push({ type, value: spot, start, end });
-			prev = part;
-			spot = '';
-			start = position + 1;
-		} else if ((part == ',' || part == ":") && is_a_comment == false) {
-			type = 'initial_place';
-			end = position - 1;
-			tokens.push({ type, value: spot, start, end });
-			prev = part;
-			spot = '';
-			start = position + 1;
-		} else if (part == " " && /[a-zA-Z0-9_]+/.test(spot) && is_a_comment == false) {
-			type = 'name';
-			end = position - 1;
-			tokens.push({ type, value: spot, start, end });
-			prev = part;
-			spot = '';
-			start = position + 1;
-		} else if (branches.includes(spot) && is_a_comment == false) {
-			type = 'branch';
-			end = position;
-			tokens.push({ type, value: spot, start, end });
-			prev = part;
-			spot = '';
-			start = position + 1;
-		} prev = part;
-
-	}
-	//console.log(tokens);
-	//console.log(problems);
-	return new TokenizedData(tokens, problems);
-	//Remember to handle underscores and the -> function correctly!!!!!
-	///// MOLLY REMEMBER TO DOWNLOAD THE NPM STUFF LOOK AT VS CODE DOCUMENTATITON!!!!!
-}
-
-export function indexOfNextWhitespace(data: string[], index: number): number {
-	let terms = -1;
-	const letters = data.slice(index);
-	for (const letter of letters) {
-		if (letter != " ") {
-			terms++;
-		}
-		else {
-			break;
-		}
-	}
-	if (terms != 0) {
-		return terms;
-	}
-	else {
-		return 0;
-	}
+interface CoplandDiagnostic extends Diagnostic {
+	tokenText?: string;
 }
 
 async function addErrorUnderlines(textDocument: TextDocument): Promise<Diagnostic[]> {
 	const text = textDocument.getText();
-	const info: Diagnostic[] = [];
+	const info: CoplandDiagnostic[] = [];
 	Lexer.reset(text);
 	let message = '';
-	const categories = ["invalid_copy", "invalid_identifier_case", "unknown", "invalid_null", "rcurly", "lcurly"];
+	const categories = ["invalid_copy", "invalid_identifier_case", "invalid_null", "rcurly", "lcurly"];
 	for (const token of Lexer) {
 		if (token.type != undefined) {
 			if (categories.includes(token.type)) {
@@ -414,10 +187,6 @@ async function addErrorUnderlines(textDocument: TextDocument): Promise<Diagnosti
 					}
 					case "invalid_identifier_case": {
 						message = "Names can not start with a capital letter.";
-						break;
-					}
-					case "unknown": {
-						message = "These are unknown terms.";
 						break;
 					}
 					case "invalid_null": {
@@ -433,15 +202,15 @@ async function addErrorUnderlines(textDocument: TextDocument): Promise<Diagnosti
 						break;
 					}
 				}
-				const problem: Diagnostic = {
+				const problem: CoplandDiagnostic = {
 					severity: DiagnosticSeverity.Error,
 					range: {
 						start: textDocument.positionAt(token.offset),
 						end: textDocument.positionAt(token.offset+token.text.length)
 					},
 					message: message,
-					source: 'ex'
-
+					source: 'ex',
+					tokenText: token.text
 				};
 				if (hasDiagnosticRelatedInformationCapability) {
 					problem.relatedInformation = [
@@ -454,98 +223,46 @@ async function addErrorUnderlines(textDocument: TextDocument): Promise<Diagnosti
 						}
 					];
 				}
+				console.log(problem.tokenText);
 				info.push(problem);
 			}
 		}
 	}
-	return info;
+	const tree = parse(text);
+  	const errors = findErrors(tree.rootNode);
+	const diagnostics = errors.map(toDiagnostic);
+	
+	const seen = new Set<string>();
+    const allDiagnostics = [...info, ...diagnostics];
+    const filteredDiagnostics: Diagnostic[] = [];
+
+	for (const diag of allDiagnostics) {
+		const key = diagnosticKey(diag, (diag as CoplandDiagnostic).tokenText);
+		if (!seen.has(key)) {
+			seen.add(key);
+			filteredDiagnostics.push(diag);
+		}
+	}
+
+	function diagnosticKey(diag: Diagnostic, tokenText?: string): string {
+		return [
+			diag.range.start.line,
+			diag.range.start.character,
+			diag.range.end.line,
+			diag.range.end.character,
+			tokenText ?? ''
+		].join(':');
+	}
+
+
+	return filteredDiagnostics;
 }
-
-
-
-
-// async function validateTextDocument(textDocument: TextDocument): Promise<Diagnostic[]> {
-// 	// In this simple example we get the settings for every validate run.
-// 	const settings = await getDocumentSettings(textDocument.uri);
-
-// 	// The validator creates diagnostics for all uppercase words length 2 and more
-// 	const text = textDocument.getText();
-// 	const pattern = /\b[A-Z]{2,}\b/g;
-// 	let m: RegExpExecArray | null;
-// 	//MOLLY THIS IS BROKEN FIX LATER FOR TESTING JSD:OGFJLDSKHJKFLSKDJF
-// 	let problems = 0;
-// 	const diagnostics: Diagnostic[] = [];
-// 	while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
-// 		problems++;
-// 		const diagnostic: Diagnostic = {
-// 			severity: DiagnosticSeverity.Warning,
-// 			range: {
-// 				start: textDocument.positionAt(m.index),
-// 				end: textDocument.positionAt(m.index + m[0].length)
-// 			},
-// 			message: `${m[0]} starts with an uppercase.`,
-// 			source: 'ex'
-// 		};
-// 		if (hasDiagnosticRelatedInformationCapability) {
-// 			diagnostic.relatedInformation = [
-// 				{
-// 					location: {
-// 						uri: textDocument.uri,
-// 						range: Object.assign({}, diagnostic.range)
-// 					},
-// 					message: 'You can not start a place or symbol with an uppercase letter'
-// 				},
-
-// 			];
-// 		}
-// 		diagnostics.push(diagnostic);
-// 	}
-// 	return diagnostics;
-// }
-
-// connection.onDidSaveTextDocument()
-
+///CURRENTLY: THIS WORKS WELL FOR OTHER ERRORS BUT IS A LITTLE FINIKY FOR THE BRACKETS!!!!
 
 connection.onDidChangeWatchedFiles(_change => {
 	// Monitored files have change in VSCode
 	connection.console.log('We received a file change event');
 });
-
-// This handler provides the initial list of the completion items.
-// connection.onCompletion(
-// 	(_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
-// 		// The pass parameter contains the position of the text document in
-// 		// which code complete got requested. For the example we ignore this
-// 		// info and always provide the same completion items.
-// 		return [
-// 			{
-// 				label: 'TypeScript',
-// 				kind: CompletionItemKind.Text,
-// 				data: 1
-// 			},
-// 			{
-// 				label: 'JavaScript',
-// 				kind: CompletionItemKind.Text,
-// 				data: 2
-// 			}
-// 		];
-// 	}
-// );
-
-// This handler resolves additional information for the item selected in
-// the completion list.
-// connection.onCompletionResolve(
-// 	(item: CompletionItem): CompletionItem => {
-// 		if (item.data === 1) {
-// 			item.detail = 'TypeScript details';
-// 			item.documentation = 'TypeScript documentation';
-// 		} else if (item.data === 2) {
-// 			item.detail = 'JavaScript details';
-// 			item.documentation = 'JavaScript documentation';
-// 		}
-// 		return item;
-// 	}
-// );
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events
