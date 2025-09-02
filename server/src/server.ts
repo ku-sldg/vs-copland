@@ -182,23 +182,23 @@ async function addErrorUnderlines(textDocument: TextDocument): Promise<Diagnosti
 			if (categories.includes(token.type)) {
 				switch (token.type) {
 					case "invalid_copy": {
-						message = "Names can not start with an underscore, and copy can not be followed by anything other than a space or ) ].";
+						message = "Names cannot begin with underscore. Copy cannot be followed by anything other than a space, ), or ].";
 						break;
 					}
 					case "invalid_identifier_case": {
-						message = "Names can not start with a capital letter.";
+						message = "Names cannot begin with capital letters.";
 						break;
 					}
 					case "invalid_null": {
-						message = "Null can not contain any terms, curly brackets are a key term.";
+						message = "Null cannot contain any terms.";
 						break;
 					}
 					case "rcurly": {
-						message = "Curly brackets can not be used for grouping/Invalid use of null.";
+						message = "Curly brackets cannot be used for grouping/Invalid use of null.";
 						break;
 					}
 					case "lcurly":{
-						message = "Curly brackets can not be used for grouping/Invalid use of null.";
+						message = "Curly brackets cannot be used for grouping/Invalid use of null.";
 						break;
 					}
 				}
@@ -219,7 +219,7 @@ async function addErrorUnderlines(textDocument: TextDocument): Promise<Diagnosti
 								uri: textDocument.uri,
 								range: Object.assign({}, problem.range)
 							},
-							message: "See copland syntax for more information."
+							message: "See Copland concrete syntax for more information."
 						}
 					];
 				}
