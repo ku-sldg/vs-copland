@@ -158,14 +158,7 @@ connection.languages.diagnostics.on(async (params) => {
 	}
 });
 
-// The content of a text document has changed. This event is emitted
-// when the text document first opened or when its content has changed.
 
-// documents.onDidChangeContent(change => {
-// 	console.log("HEY Method Called!!!");
-// 	addErrorUnderlines(change.document);
-// }
-// );
 
 interface CoplandDiagnostic extends Diagnostic {
 	tokenText?: string;
