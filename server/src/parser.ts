@@ -1,5 +1,6 @@
 import Parser from 'tree-sitter';
 import Copland from '../../tree-sitter-copland';
+import { Diagnostic } from 'vscode-languageserver';
 
 const parser = new Parser();
 parser.setLanguage(Copland);
@@ -25,8 +26,11 @@ export function findErrors(node: Parser.SyntaxNode, errors: Parser.SyntaxNode[] 
   return errors;
 }
 
+interface CoplandDiagnostic extends Diagnostic {
+  tokenText?: string;
+}
 // Convert error nodes to diagnostics
-export function toDiagnostic(errorNode: Parser.SyntaxNode): import('vscode-languageserver').Diagnostic {
+export function toDiagnostic(errorNode: Parser.SyntaxNode): CoplandDiagnostic {
   const start = errorNode.startPosition;
   const end = errorNode.endPosition;
   return {
@@ -37,5 +41,6 @@ export function toDiagnostic(errorNode: Parser.SyntaxNode): import('vscode-langu
     severity: 1,
     source: "copland-parser",
     message: "Syntax error",
+    tokenText: errorNode.text
   };
 }
