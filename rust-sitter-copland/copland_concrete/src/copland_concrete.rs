@@ -1,27 +1,64 @@
 #[rust_sitter::grammar("copland_concrete")]
+
 pub mod grammar {
+    //pub static PLC_PATTERN : &str = r"([a-z][a-zA-Z0-9_]*)|(\d+)";
+    //const plc_pattern : &str = r"([a-z][a-zA-Z0-9_]*)|(\d+)";
+
     #[rust_sitter::language]
     #[derive(PartialEq, Eq, Debug)]
-    // r"^[a-z][a-zA-Z0-9_]*$"
-    pub enum Expression {
-        Number(#[rust_sitter::leaf(pattern = r"[a-z][a-zA-Z0-9_]*", transform = |v| v.parse().unwrap())] String),
-        #[rust_sitter::prec_left(1)]
-        Sub(
-            Box<Expression>,
-            #[rust_sitter::leaf(text = "-")] (),
-            Box<Expression>,
+
+
+    pub enum CoplandTermConcrete {
+
+        //#[rust_sitter::prec(3)]
+        Msp(
+        #[rust_sitter::leaf(pattern = r"[a-z][a-zA-Z0-9_]*", transform = |v| v.parse().unwrap())] String,
+        #[rust_sitter::leaf(pattern = r"([a-z][a-zA-Z0-9_]*)|(\d+)", transform = |v| v.parse().unwrap())] String,
+        #[rust_sitter::leaf(pattern = r"[a-z][a-zA-Z0-9_]*", transform = |v| v.parse().unwrap())] String,), 
+
+        //#[rust_sitter::prec(5)]
+        ParensTerm(
+            #[rust_sitter::leaf(text = "(")] (), 
+
+            Box<CoplandTermConcrete>,
+
+            #[rust_sitter::leaf(text = ")")] (), 
         ),
+
+        #[rust_sitter::prec_right(4)]
+        LinearTerm(
+            Box<CoplandTermConcrete>,
+
+            #[rust_sitter::leaf(text = "->")] (), 
+
+            Box<CoplandTermConcrete>,
+        ),
+
+        
         #[rust_sitter::prec_left(2)]
-        Mul(
-            Box<Expression>,
-            #[rust_sitter::leaf(text = "*")] (),
-            Box<Expression>,
+        BranchTerm(
+            Box<CoplandTermConcrete>,
+
+            #[rust_sitter::leaf(pattern = r"[+]|[-]", transform = |v| v.parse().unwrap())] String,
+            #[rust_sitter::leaf(text = "<")] (), 
+            #[rust_sitter::leaf(pattern = r"[+]|[-]", transform = |v| v.parse().unwrap())] String,
+
+            Box<CoplandTermConcrete>,
         ),
+
+        #[rust_sitter::prec(1)]
+        AtTerm(
+            #[rust_sitter::leaf(text = "@")] (), 
+            #[rust_sitter::leaf(pattern = r"([a-z][a-zA-Z0-9_]*)|(\d+)", transform = |v| v.parse().unwrap())] String,
+            #[rust_sitter::leaf(text = "[")] (), 
+            Box<CoplandTermConcrete>,
+            #[rust_sitter::leaf(text = "]")] ()
+        )
     }
 
     #[rust_sitter::extra]
     struct Whitespace {
-        #[rust_sitter::leaf(pattern = r"\s")]
+        #[rust_sitter::leaf(pattern = r"\s+")]
         _whitespace: (),
     }
 }
