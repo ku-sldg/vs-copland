@@ -1,0 +1,23 @@
+[package]
+name = "copland-concrete"
+version = "0.4.5"
+authors = ["Adam Petz"]
+edition = "2021"
+publish = false
+
+[features]
+default = ["tree-sitter-c2rust"]
+tree-sitter-c2rust = ["rust-sitter/tree-sitter-c2rust"]
+tree-sitter-standard = ["rust-sitter/tree-sitter-standard"]
+
+[dependencies]
+rust-sitter = { git = "https://github.com/hydro-project/rust-sitter", default-features = false }
+codemap = "0.1.3"
+codemap-diagnostic = "0.1.1"
+
+[build-dependencies]
+rust-sitter-tool = { git = "https://github.com/hydro-project/rust-sitter" }
+
+[dev-dependencies]
+insta = "1.39"
+wasm-bindgen-test = "0.3.0"
