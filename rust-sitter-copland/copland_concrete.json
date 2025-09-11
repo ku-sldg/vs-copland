@@ -1,0 +1,320 @@
+{
+  "name": "copland_concrete",
+  "word": null,
+  "rules": {
+    "source_file": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "CoplandTermConcrete_Msp"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "CoplandTermConcrete_ParensTerm"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "CoplandTermConcrete_LinearTerm"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "CoplandTermConcrete_BranchTerm"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "CoplandTermConcrete_AtTerm"
+        }
+      ]
+    },
+    "CoplandTermConcrete_Msp_0": {
+      "type": "PATTERN",
+      "value": "[a-z][a-zA-Z0-9_]*"
+    },
+    "CoplandTermConcrete_Msp_1": {
+      "type": "PATTERN",
+      "value": "([a-z][a-zA-Z0-9_]*)|(\\d+)"
+    },
+    "CoplandTermConcrete_Msp_2": {
+      "type": "PATTERN",
+      "value": "[a-z][a-zA-Z0-9_]*"
+    },
+    "CoplandTermConcrete_Msp": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "0",
+          "content": {
+            "type": "SYMBOL",
+            "name": "CoplandTermConcrete_Msp_0"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "CoplandTermConcrete_Msp_1"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "2",
+          "content": {
+            "type": "SYMBOL",
+            "name": "CoplandTermConcrete_Msp_2"
+          }
+        }
+      ]
+    },
+    "CoplandTermConcrete_ParensTerm_0": {
+      "type": "STRING",
+      "value": "("
+    },
+    "CoplandTermConcrete_ParensTerm_2": {
+      "type": "STRING",
+      "value": ")"
+    },
+    "CoplandTermConcrete_ParensTerm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "0",
+          "content": {
+            "type": "SYMBOL",
+            "name": "CoplandTermConcrete_ParensTerm_0"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "CoplandTermConcrete"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "2",
+          "content": {
+            "type": "SYMBOL",
+            "name": "CoplandTermConcrete_ParensTerm_2"
+          }
+        }
+      ]
+    },
+    "CoplandTermConcrete_LinearTerm_1": {
+      "type": "STRING",
+      "value": "->"
+    },
+    "CoplandTermConcrete_LinearTerm": {
+      "type": "PREC_RIGHT",
+      "value": 4,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "0",
+            "content": {
+              "type": "SYMBOL",
+              "name": "CoplandTermConcrete"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "1",
+            "content": {
+              "type": "SYMBOL",
+              "name": "CoplandTermConcrete_LinearTerm_1"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "2",
+            "content": {
+              "type": "SYMBOL",
+              "name": "CoplandTermConcrete"
+            }
+          }
+        ]
+      }
+    },
+    "CoplandTermConcrete_BranchTerm_1": {
+      "type": "PATTERN",
+      "value": "[+]|[-]"
+    },
+    "CoplandTermConcrete_BranchTerm_2": {
+      "type": "STRING",
+      "value": "<"
+    },
+    "CoplandTermConcrete_BranchTerm_3": {
+      "type": "PATTERN",
+      "value": "[+]|[-]"
+    },
+    "CoplandTermConcrete_BranchTerm": {
+      "type": "PREC_LEFT",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "0",
+            "content": {
+              "type": "SYMBOL",
+              "name": "CoplandTermConcrete"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "1",
+            "content": {
+              "type": "SYMBOL",
+              "name": "CoplandTermConcrete_BranchTerm_1"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "2",
+            "content": {
+              "type": "SYMBOL",
+              "name": "CoplandTermConcrete_BranchTerm_2"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "3",
+            "content": {
+              "type": "SYMBOL",
+              "name": "CoplandTermConcrete_BranchTerm_3"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "4",
+            "content": {
+              "type": "SYMBOL",
+              "name": "CoplandTermConcrete"
+            }
+          }
+        ]
+      }
+    },
+    "CoplandTermConcrete_AtTerm_0": {
+      "type": "STRING",
+      "value": "@"
+    },
+    "CoplandTermConcrete_AtTerm_1": {
+      "type": "PATTERN",
+      "value": "([a-z][a-zA-Z0-9_]*)|(\\d+)"
+    },
+    "CoplandTermConcrete_AtTerm_2": {
+      "type": "STRING",
+      "value": "["
+    },
+    "CoplandTermConcrete_AtTerm_4": {
+      "type": "STRING",
+      "value": "]"
+    },
+    "CoplandTermConcrete_AtTerm": {
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "0",
+            "content": {
+              "type": "SYMBOL",
+              "name": "CoplandTermConcrete_AtTerm_0"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "1",
+            "content": {
+              "type": "SYMBOL",
+              "name": "CoplandTermConcrete_AtTerm_1"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "2",
+            "content": {
+              "type": "SYMBOL",
+              "name": "CoplandTermConcrete_AtTerm_2"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "3",
+            "content": {
+              "type": "SYMBOL",
+              "name": "CoplandTermConcrete"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "4",
+            "content": {
+              "type": "SYMBOL",
+              "name": "CoplandTermConcrete_AtTerm_4"
+            }
+          }
+        ]
+      }
+    },
+    "CoplandTermConcrete": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "CoplandTermConcrete_Msp"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "CoplandTermConcrete_ParensTerm"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "CoplandTermConcrete_LinearTerm"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "CoplandTermConcrete_BranchTerm"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "CoplandTermConcrete_AtTerm"
+        }
+      ]
+    },
+    "Whitespace__whitespace": {
+      "type": "PATTERN",
+      "value": "\\s+"
+    },
+    "Whitespace": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "_whitespace",
+          "content": {
+            "type": "SYMBOL",
+            "name": "Whitespace__whitespace"
+          }
+        }
+      ]
+    }
+  },
+  "extras": [
+    {
+      "type": "SYMBOL",
+      "name": "Whitespace"
+    }
+  ]
+}
