@@ -1,3 +1,69 @@
+use rust_am_lib::copland::ASP::*;
+use rust_am_lib::copland::Term::*;
+use rust_am_lib::copland::ASP_PARAMS;
+//use rust_am_lib::debug_print;
+
+use serde_json::json;
+
+#[allow(non_snake_case)]
+fn string_to_SP (s:String) -> rust_am_lib::copland::SP {
+
+    if s.eq(&String::from("+")) { return rust_am_lib::copland::SP::ALL }
+    else {
+        if s.eq(&String::from("-")) { return rust_am_lib::copland::SP::NONE }
+        else { return rust_am_lib::copland::SP::NONE }
+    }
+}
+
+#[allow(non_snake_case)]
+fn strings_to_Split (s1:String, s2:String) -> rust_am_lib::copland::Split {
+
+    return rust_am_lib::copland::Split { split1: string_to_SP(s1), split2: string_to_SP(s2) }
+}
+
+#[allow(non_snake_case)]
+pub fn copland_concrete_to_ast (ct: grammar::CoplandTermConcrete) -> rust_am_lib::copland::Term {
+
+    match ct {
+
+        grammar::CoplandTermConcrete::Msp(aid, plc, tid) => 
+            {
+                let asp_params = ASP_PARAMS {ASP_ID: aid, ASP_ARGS: (json!({ })), ASP_PLC: plc, ASP_TARG_ID:tid};
+                return asp (ASPC (asp_params))
+            }
+
+        grammar::CoplandTermConcrete::ParensTerm(_, innerCt, _) => 
+            {
+                return copland_concrete_to_ast(*innerCt)
+            }
+
+        grammar::CoplandTermConcrete::LinearTerm(leftCt, _, rightCt) => 
+            {
+                let left_ast = copland_concrete_to_ast(*leftCt);
+                let right_ast = copland_concrete_to_ast(*rightCt);
+                return rust_am_lib::copland::Term::lseq(Box::new(left_ast), Box::new(right_ast))
+            }
+
+        grammar::CoplandTermConcrete::BranchTerm(leftCt, sp1, _, sp2, rightCt) => 
+            {
+                let left_ast = copland_concrete_to_ast(*leftCt);
+                let right_ast = copland_concrete_to_ast(*rightCt);
+                let split= strings_to_Split(sp1, sp2);
+                return rust_am_lib::copland::Term::bseq(split, Box::new(left_ast), Box::new(right_ast))
+            }
+
+        grammar::CoplandTermConcrete::AtTerm(_, plc, _, innerCt, _) => 
+            {
+                let inner_ast = copland_concrete_to_ast(*innerCt);
+                return rust_am_lib::copland::Term::att(plc, Box::new(inner_ast))
+            }
+    }
+}
+
+
+
+
+
 #[rust_sitter::grammar("copland_concrete")]
 
 pub mod grammar {

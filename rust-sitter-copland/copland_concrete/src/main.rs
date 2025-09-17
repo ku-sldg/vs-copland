@@ -1,8 +1,10 @@
-use std::io::Write;
+use std::{io::Write};
 
 use codemap::CodeMap;
 use codemap_diagnostic::{ColorConfig, Diagnostic, Emitter, Level, SpanLabel, SpanStyle};
 use rust_sitter::errors::{ParseError, ParseErrorReason};
+
+use crate::copland_concrete::copland_concrete_to_ast;
 
 mod copland_concrete;
 
@@ -70,7 +72,17 @@ fn main() {
         }
 
         match copland_concrete::grammar::parse(input) {
-            Ok(expr) => println!("{expr:?}"),
+            Ok(expr) => {
+                
+                println!("{expr:?}");
+
+                let ast_expr = copland_concrete_to_ast(expr);
+                println!("{ast_expr:?}");
+
+                let ast_expr_json = serde_json::to_string(&ast_expr).unwrap();
+                
+                println!("{ast_expr_json}");
+            }
             Err(errs) => {
                 let mut codemap = CodeMap::new();
                 let file_span = codemap.add_file("<input>".to_string(), input.to_string());
