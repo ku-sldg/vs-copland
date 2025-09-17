@@ -1,4 +1,5 @@
-use std::{io::Write};
+use std::{io::Write, io::Read};
+use std::fs::File;
 
 use codemap::CodeMap;
 use codemap_diagnostic::{ColorConfig, Diagnostic, Emitter, Level, SpanLabel, SpanStyle};
@@ -57,35 +58,62 @@ fn convert_parse_error_to_diagnostics(
     }
 }
 
+/*
+    let mut file = File::open("example.txt")?;
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)?;
+    println!("File content:\n{}", contents);
+    */
+
+
+
 fn main() {
     let stdin = std::io::stdin();
 
     loop {
-        print!("> ");
+        print!("\nEnter input filename (i.e. my_term.cop): ");
         std::io::stdout().flush().unwrap();
 
-        let mut input = String::new();
-        stdin.read_line(&mut input).unwrap();
-        let input = input.trim();
-        if input.is_empty() {
+        let mut input_filename = String::new();
+        stdin.read_line(&mut input_filename).unwrap();
+        let input_filename = input_filename.trim();
+        if input_filename.is_empty() {
             break;
         }
 
-        match copland_concrete::grammar::parse(input) {
+        print!("Enter output filename (i.e. my_term.json): ");
+        std::io::stdout().flush().unwrap();
+
+        let mut output_filename = String::new();
+        stdin.read_line(&mut output_filename).unwrap();
+        let output_filename = output_filename.trim();
+        if output_filename.is_empty() {
+            break;
+        }
+
+        let mut file = File::open(input_filename).unwrap();
+        let mut contents = String::new();
+        file.read_to_string(&mut contents).unwrap();
+        print!("\nSuccessfully read file contents from file: {}\n\n", input_filename);
+
+        match copland_concrete::grammar::parse(&contents) {
             Ok(expr) => {
                 
-                println!("{expr:?}");
+                println!("CST Expression:\n{expr:?}\n");
 
                 let ast_expr = copland_concrete_to_ast(expr);
-                println!("{ast_expr:?}");
+                println!("AST Expression:\n{ast_expr:?}\n");
 
                 let ast_expr_json = serde_json::to_string(&ast_expr).unwrap();
-                
-                println!("{ast_expr_json}");
+                println!("AST Expression JSON:\n{ast_expr_json}\n");
+
+                let mut file = File::create(output_filename).unwrap();
+                file.write_all(ast_expr_json.as_bytes()).unwrap();
+                println!("Successfully wrote JSON AST to file: {}\n", output_filename);
             }
             Err(errs) => {
                 let mut codemap = CodeMap::new();
-                let file_span = codemap.add_file("<input>".to_string(), input.to_string());
+                let file_span = codemap.add_file("<input>".to_string(), contents.to_string());
                 let mut diagnostics = vec![];
                 for error in errs {
                     convert_parse_error_to_diagnostics(&file_span.span, &error, &mut diagnostics);

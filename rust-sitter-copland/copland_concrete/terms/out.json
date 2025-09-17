@@ -1,0 +1,12 @@
+{
+    "TERM_CONSTRUCTOR": "asp",
+    "TERM_BODY": {
+        "ASP_CONSTRUCTOR": "ASPC",
+        "ASP_BODY": {
+            "ASP_ID": "a3",
+            "ASP_ARGS": {},
+            "ASP_PLC": "p3",
+            "ASP_TARG_ID": "t4"
+        }
+    }
+}
