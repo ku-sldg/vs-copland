@@ -26,6 +26,12 @@ pub fn copland_concrete_to_ast (ct: grammar::CoplandTermConcrete) -> rust_am_lib
 
     match ct {
 
+        grammar::CoplandTermConcrete::Appr(_) => 
+            {
+                //let asp_params = ASP_PARAMS {ASP_ID: aid, ASP_ARGS: (json!({ })), ASP_PLC: plc, ASP_TARG_ID:tid};
+                return asp (APPR)
+            }
+
         grammar::CoplandTermConcrete::Msp(aid, plc, tid) => 
             {
                 let asp_params = ASP_PARAMS {ASP_ID: aid, ASP_ARGS: (json!({ })), ASP_PLC: plc, ASP_TARG_ID:tid};
@@ -75,6 +81,9 @@ pub mod grammar {
 
 
     pub enum CoplandTermConcrete {
+
+        //#[rust_sitter::prec(3)]
+        Appr(#[rust_sitter::leaf(text = "?")] ()),
 
         //#[rust_sitter::prec(3)]
         Msp(
