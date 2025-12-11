@@ -57,7 +57,9 @@ export function activate(context: ExtensionContext) {
 	context.subscriptions.push(
     vscode.commands.registerCommand('copland.runTreeSitterDiagnostics', async () => {
       const editor = vscode.window.activeTextEditor;
-      if (!editor) return;
+      if (!editor){
+		return;
+	  } 
 
       const uri = editor.document.uri.toString();
       await client.sendRequest('copland/treeSitterDiagnostics', { uri });
