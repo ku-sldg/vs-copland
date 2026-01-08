@@ -17,6 +17,10 @@
 		"vscode": "^1.75.0"
 	},
 	"main": "./client/out/extension",
+	"activationEvents": [
+		"onLanguage:copland",
+		"onCommand:copland.runTreeSitterDiagnostics"
+	],
 	"contributes": {
 		"languages": [
 			{
