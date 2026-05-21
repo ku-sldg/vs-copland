@@ -10,4 +10,5 @@ client/server
 **/target/.rustc_info.json
 **/*.snap
 .claude/
+bin/
 rust-sitter-copland/copland_concrete/.cargo/

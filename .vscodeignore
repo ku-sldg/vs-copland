@@ -1,0 +1,13 @@
+# Keep the bundled binary
+!bin/
+
+# Exclude source and dev files
+rust-sitter-copland/
+.claude/
+.vscode/
+scripts/
+tsconfig.json
+eslint.config.mjs
+client/src/
+server/src/
+**/.gitignore
