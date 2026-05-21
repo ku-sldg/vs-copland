@@ -6,4 +6,8 @@ client/server
 **/*.tsbuildinfo
 
 **/target/debug/*
+**/target/release/*
+**/target/.rustc_info.json
 **/*.snap
+.claude/
+rust-sitter-copland/copland_concrete/.cargo/

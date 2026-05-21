@@ -13,8 +13,6 @@
 	},
 	"dependencies": {
 		"moo": "^0.5.2",
-		"tree-sitter": "^0.25.0",
-		"tree-sitter-cli": "^0.25.8",
 		"vscode-languageserver": "^9.0.1",
 		"vscode-languageserver-textdocument": "^1.0.11"
 	},

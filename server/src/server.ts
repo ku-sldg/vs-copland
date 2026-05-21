@@ -24,7 +24,7 @@ import {
 	TextDocument
 } from 'vscode-languageserver-textdocument';
 
-import { parse, findErrors, toDiagnostic } from './parser';
+import { parseWithRustSitter } from './parser';
 
 
 import { Lexer } from "./lexer";
@@ -221,9 +221,7 @@ async function addErrorUnderlines(textDocument: TextDocument): Promise<Diagnosti
 			}
 		}
 	}
-	const tree = parse(text);
-  	const errors = findErrors(tree.rootNode);
-	const diagnostics = errors.map(toDiagnostic);
+	const diagnostics = await parseWithRustSitter(text);
 	
 	const seen = new Set<string>();
     const allDiagnostics = [...info, ...diagnostics];

@@ -4,7 +4,6 @@
  * ------------------------------------------------------------------------------------------ */
 
 import * as path from 'path';
-import * as vscode from 'vscode';
 import { workspace, ExtensionContext } from 'vscode';
 
 import {
@@ -53,16 +52,6 @@ export function activate(context: ExtensionContext) {
 	// Start the client. This will also launch the server
 	client.start();
 
-	// Register command to run Copland syntax check with TreeSitter parser
-	context.subscriptions.push(
-    vscode.commands.registerCommand('copland.runTreeSitterDiagnostics', async () => {
-      const editor = vscode.window.activeTextEditor;
-      if (!editor) return;
-
-      const uri = editor.document.uri.toString();
-      await client.sendRequest('copland/treeSitterDiagnostics', { uri });
-    })
- 	);
 }
 
 export function deactivate(): Thenable<void> | undefined {

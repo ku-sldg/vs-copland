@@ -1,46 +1,58 @@
-import Parser from 'tree-sitter';
-import Copland from '../../tree-sitter-copland';
-import { Diagnostic } from 'vscode-languageserver';
+import * as path from 'path';
+import { spawn } from 'child_process';
+import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
 
-const parser = new Parser();
-parser.setLanguage(Copland);
-
-// Parse text using TreeSitter parser
-export function parse(text: string) {
-  return parser.parse(text);
+export interface CoplandDiagnostic extends Diagnostic {
+	tokenText?: string;
 }
 
-// Locate error nodes in parse tree
-export function findErrors(node: Parser.SyntaxNode, errors: Parser.SyntaxNode[] = []): Parser.SyntaxNode[] {
-  if (node.type === "ERROR") {
-    errors.push(node);
-  }
+interface RustParseError { start: number; end: number; message: string; }
+interface RustPipeOutput { ok: boolean; errors?: RustParseError[]; }
 
-  for (let i = 0; i < node.namedChildCount; i++) {
-    const child = node.namedChild(i);
-    if (child) {
-      findErrors(child, errors);
-    }
-  }
+const CARGO_TARGET_DIR = process.env.CARGO_TARGET_DIR ||
+	path.join(__dirname, '..', '..', 'rust-sitter-copland', 'copland_concrete', 'target');
+const BINARY_NAME = process.platform === 'win32' ? 'copland-concrete.exe' : 'copland-concrete';
+const BINARY_PATH = path.join(CARGO_TARGET_DIR, 'release', BINARY_NAME);
 
-  return errors;
+function offsetToPosition(text: string, offset: number): { line: number; character: number } {
+	const chunk = text.slice(0, Math.min(offset, text.length));
+	const lines = chunk.split('\n');
+	return { line: lines.length - 1, character: lines[lines.length - 1].length };
 }
 
-interface CoplandDiagnostic extends Diagnostic {
-  tokenText?: string;
-}
-// Convert error nodes to diagnostics
-export function toDiagnostic(errorNode: Parser.SyntaxNode): CoplandDiagnostic {
-  const start = errorNode.startPosition;
-  const end = errorNode.endPosition;
-  return {
-    range: {
-      start: { line: start.row, character: start.column },
-      end: { line: end.row, character: end.column },
-    },
-    severity: 1,
-    source: "copland-parser",
-    message: "Syntax error",
-    tokenText: errorNode.text
-  };
+export async function parseWithRustSitter(text: string): Promise<CoplandDiagnostic[]> {
+	return new Promise((resolve) => {
+		const child = spawn(BINARY_PATH, ['--pipe'], { stdio: ['pipe', 'pipe', 'pipe'] });
+		let stdout = '';
+
+		child.stdout.on('data', (chunk: Buffer) => { stdout += chunk.toString(); });
+
+		child.on('error', (err: NodeJS.ErrnoException) => {
+			if (err.code === 'ENOENT') {
+				console.warn('[copland] Rust binary not found — run: cargo build --release in rust-sitter-copland/copland_concrete');
+			}
+			resolve([]);
+		});
+
+		child.on('close', () => {
+			try {
+				const result: RustPipeOutput = JSON.parse(stdout.trim());
+				if (result.ok || !result.errors) { resolve([]); return; }
+				resolve(result.errors.map(e => ({
+					range: {
+						start: offsetToPosition(text, e.start),
+						end: offsetToPosition(text, e.end),
+					},
+					severity: DiagnosticSeverity.Error,
+					source: 'copland-rust-parser',
+					message: e.message,
+				})));
+			} catch {
+				resolve([]);
+			}
+		});
+
+		child.stdin.write(text);
+		child.stdin.end();
+	});
 }

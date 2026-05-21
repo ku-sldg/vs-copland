@@ -151,6 +151,7 @@ dependencies = [
  "rust-sitter",
  "rust-sitter-tool",
  "rust_am_lib",
+ "serde",
  "serde_json",
  "wasm-bindgen-test",
 ]

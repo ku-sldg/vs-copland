@@ -4,10 +4,60 @@ use std::fs::File;
 use codemap::CodeMap;
 use codemap_diagnostic::{ColorConfig, Diagnostic, Emitter, Level, SpanLabel, SpanStyle};
 use rust_sitter::errors::{ParseError, ParseErrorReason};
+use serde::Serialize;
 
 use crate::copland_concrete::copland_concrete_to_ast;
 
 mod copland_concrete;
+
+#[derive(Serialize)]
+struct ParseErrorOutput {
+    start: usize,
+    end: usize,
+    message: String,
+}
+
+#[derive(Serialize)]
+struct PipeOutput {
+    ok: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    errors: Option<Vec<ParseErrorOutput>>,
+}
+
+fn flatten_errors(error: &ParseError, out: &mut Vec<ParseErrorOutput>) {
+    match &error.reason {
+        ParseErrorReason::MissingToken(tok) =>
+            out.push(ParseErrorOutput { start: error.start, end: error.end,
+                message: format!("Missing token: \"{tok}\"") }),
+        ParseErrorReason::UnexpectedToken(tok) =>
+            out.push(ParseErrorOutput { start: error.start, end: error.end,
+                message: format!("Unexpected token: \"{tok}\"") }),
+        ParseErrorReason::FailedNode(errors) => {
+            if errors.is_empty() {
+                out.push(ParseErrorOutput { start: error.start, end: error.end,
+                    message: "Failed to parse node".to_string() });
+            } else {
+                for e in errors { flatten_errors(e, out); }
+            }
+        }
+    }
+}
+
+fn run_pipe_mode() {
+    let mut text = String::new();
+    std::io::stdin().read_to_string(&mut text).unwrap();
+
+    let output = match copland_concrete::grammar::parse(&text) {
+        Ok(_) => PipeOutput { ok: true, errors: None },
+        Err(errs) => {
+            let mut flat = vec![];
+            for e in &errs { flatten_errors(e, &mut flat); }
+            PipeOutput { ok: false, errors: Some(flat) }
+        }
+    };
+
+    println!("{}", serde_json::to_string(&output).unwrap());
+}
 
 fn convert_parse_error_to_diagnostics(
     file_span: &codemap::Span,
@@ -58,16 +108,7 @@ fn convert_parse_error_to_diagnostics(
     }
 }
 
-/*
-    let mut file = File::open("example.txt")?;
-    let mut contents = String::new();
-    file.read_to_string(&mut contents)?;
-    println!("File content:\n{}", contents);
-    */
-
-
-
-fn main() {
+fn run_repl_mode() {
     let stdin = std::io::stdin();
 
     loop {
@@ -98,7 +139,7 @@ fn main() {
 
         match copland_concrete::grammar::parse(&contents) {
             Ok(expr) => {
-                
+
                 println!("CST Expression:\n{expr:?}\n");
 
                 let ast_expr = copland_concrete_to_ast(expr);
@@ -123,5 +164,14 @@ fn main() {
                 emitter.emit(&diagnostics);
             }
         };
+    }
+}
+
+fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    if args.get(1).map(|s| s.as_str()) == Some("--pipe") {
+        run_pipe_mode();
+    } else {
+        run_repl_mode();
     }
 }
