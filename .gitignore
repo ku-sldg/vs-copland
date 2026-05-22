@@ -12,3 +12,4 @@ client/server
 .claude/
 bin/
 rust-sitter-copland/copland_concrete/.cargo/
+*.vsix
